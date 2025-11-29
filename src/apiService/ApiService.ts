@@ -1,5 +1,7 @@
 import {ApiError} from "../models/common/ApiError.ts";
 import {hasValue} from "../utils/hasValue.ts";
+import {authApi} from "../apis/authApi.ts";
+import {authLocalService} from "../storageServices/authLocalService.ts";
 
 /**
  * Типы возможных форматов ответа от сервера.
@@ -78,8 +80,6 @@ class ApiService {
             method = 'GET',
             headers = {},
             body,
-            errorContext,
-            showPopup,
             errorText,
             responseType = 'json',
             isFormData = false,
@@ -90,7 +90,7 @@ class ApiService {
             const controller = new AbortController();
 
             let requestBody: BodyInit | undefined;
-            const finalHeaders = { ...headers };
+            const finalHeaders = {...headers};
 
             if (body) {
                 if (isFormData) {
@@ -107,13 +107,16 @@ class ApiService {
                 signal: controller.signal,
             });
 
-            if (!hasValue(response)) {
-                await authApi.logout();
-            }
-
             if (!response.ok) {
-                if (response.status === 401) {
-                    await authApi.logout();
+                if (response.status === 401 && authLocalService.getToken() && authLocalService.getRefreshToken()) {
+                    const res = await authApi.refresh({
+                        token: authLocalService.getToken()!,
+                        refreshToken: authLocalService.getRefreshToken()!
+                    });
+                    if(!hasValue(res.data)) {
+                        authLocalService.clearIdentityData();
+                        window.location.href = '/';
+                    }
                 } else {
                     try {
                         errorBody = await response.json();
@@ -128,14 +131,13 @@ class ApiService {
                 errorMessage = 'Не удалось обработать запрос';
                 throw new Error('Не удалось обработать запрос');
             });
-            if (response.status === 204) return { data: undefined };
+            if (response.status === 204) return {data: undefined};
             const data = (await handler) as TResponse;
 
-            return { data: data };
+            return {data: data};
         } catch (error) {
             console.log(error);
-            errorHandler(error, errorContext, false, showPopup, errorMessage);
-            return { error: { displayText: errorMessage, body: errorBody } };
+            return {error: {displayText: errorMessage, body: errorBody}};
         }
     }
 
@@ -166,7 +168,7 @@ class ApiService {
      * @template TResponse - Тип данных ответа.
      */
     public get<TResponse>(endpoint: string, requestOptions?: RequestOptions<never>): Promise<ResponseOptions<TResponse>> {
-        return this.request<never, TResponse>(endpoint, { method: 'GET', ...requestOptions });
+        return this.request<never, TResponse>(endpoint, {method: 'GET', ...requestOptions});
     }
 
     /**
@@ -183,7 +185,7 @@ class ApiService {
         requestOptions?: RequestOptions<never>,
         body?: TRequest,
     ): Promise<ResponseOptions<TResponse>> {
-        return this.request<TRequest, TResponse>(endpoint, { method: 'POST', body, ...requestOptions });
+        return this.request<TRequest, TResponse>(endpoint, {method: 'POST', body, ...requestOptions});
     }
 
     /**
@@ -200,7 +202,7 @@ class ApiService {
         requestOptions?: RequestOptions<never>,
         body?: TRequest,
     ): Promise<ResponseOptions<TResponse>> {
-        return this.request<TRequest, TResponse>(endpoint, { method: 'PATCH', body, ...requestOptions });
+        return this.request<TRequest, TResponse>(endpoint, {method: 'PATCH', body, ...requestOptions});
     }
 
     /**
@@ -217,7 +219,7 @@ class ApiService {
         requestOptions?: RequestOptions<never>,
         body?: TRequest,
     ): Promise<ResponseOptions<TResponse>> {
-        return this.request<TRequest, TResponse>(endpoint, { method: 'PUT', body, ...requestOptions });
+        return this.request<TRequest, TResponse>(endpoint, {method: 'PUT', body, ...requestOptions});
     }
 
     /**
@@ -228,7 +230,7 @@ class ApiService {
      * @template TResponse - Тип данных ответа.
      */
     public remove<TResponse>(endpoint: string, requestOptions?: RequestOptions<never>): Promise<ResponseOptions<TResponse>> {
-        return this.request<never, TResponse>(endpoint, { method: 'DELETE', ...requestOptions });
+        return this.request<never, TResponse>(endpoint, {method: 'DELETE', ...requestOptions});
     }
 }
 
