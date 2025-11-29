@@ -1,10 +1,13 @@
 import {env} from "../env.ts";
-import ApiService, {type RequestOptions, type ResponseOptions} from "../apiService/ApiService.ts";
+import {type RequestOptions, type ResponseOptions} from "../apiService/ApiService.ts";
 import type {CreateProjectRequest} from "../models/DTOModels/Request/CreateProjectRequest.ts";
 import type {UpdateProjectRequest} from "../models/DTOModels/Request/UpdateProjectRequest.ts";
 import type {SimpleCommandResult} from "../models/DTOModels/Response/SimpleCommandResult.ts";
 import type {ProjectResponse} from "../models/DTOModels/Response/ReportResponse.ts";
 import type {ShortProjectResponse} from "../models/DTOModels/Response/ShortReportResponse.ts";
+import { createApiService } from "../apiService/createApiService.ts";
+
+const { get, post, remove, patch } = createApiService(`${env.REACT_APP_SERVICE_SERVICE_HOST}${env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS}`);
 
 /**
  * API-сервис для работы с проектами.
@@ -31,7 +34,7 @@ export const projectApi = {
             errorContext: 'Ошибка получения проекта',
             errorText: `Не удалось получить детали проекта`,
         };
-        return await projectService.get<ProjectResponse>(`/${id}`, options);
+        return await get<ProjectResponse>(`/${id}`, options);
     },
 
     /**
@@ -43,7 +46,7 @@ export const projectApi = {
             errorContext: 'Ошибка получения проектов',
             errorText: `Не удалось загрузить список проектов`,
         };
-        return await projectService.get<ShortProjectResponse>(projectApi.endPoints.all, options);
+        return await get<ShortProjectResponse>(projectApi.endPoints.all, options);
     },
 
     /**
@@ -56,7 +59,7 @@ export const projectApi = {
             errorContext: 'Ошибка создания проекта',
             errorText: `Не удалось создать проект`,
         };
-        return await projectService.post<CreateProjectRequest, number>(projectApi.endPoints.create, options, createData);
+        return await post<CreateProjectRequest, number>(projectApi.endPoints.create, createData, options);
     },
 
     /**
@@ -71,7 +74,7 @@ export const projectApi = {
             errorText: `Не удалось обновить проект`,
         };
         const endpoint = `${projectApi.endPoints.update}/${id}`;
-        const response = await projectService.patch<UpdateProjectRequest, unknown>(endpoint, options, updateData);
+        const response = await patch<UpdateProjectRequest, unknown>(endpoint, updateData, options );
         if (!response.error) {
             return { data: { successfully: true } };
         }
@@ -89,12 +92,10 @@ export const projectApi = {
             errorText: `Не удалось удалить проект`,
         };
         const endpoint = `${projectApi.endPoints.delete}/${id}`;
-        const response = await projectService.remove<unknown>(endpoint, options);
+        const response = await remove<unknown>(endpoint, options);
         if (!response.error) {
             return { data: { successfully: true } };
         }
         return { error: response?.error, data: { successfully: false } };
     },
 };
-
-const projectService = new ApiService(`${env.REACT_APP_SERVICE_SERVICE_HOST}${env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS}`);
