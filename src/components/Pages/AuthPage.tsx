@@ -1,12 +1,12 @@
 import {Button, Card, Form, Input, Select, Typography, Alert, type FormInstance} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import {useState, useRef, type FC} from "react";
-import type {LoginRequest} from "../models/DTOModels/Request/LoginRequest.ts";
-import type {RegisterRequest} from "../models/DTOModels/Request/RegisterRequest.ts";
-import {UserRole} from "../models/DTOModels/Еnums/UserRole.ts";
-import {authApi} from "../apis/authApi.ts";
-import {hasValue} from "../utils/hasValue.ts";
-import {authLocalService} from "../storageServices/authLocalService.ts";
+import type {LoginRequest} from "../../models/DTOModels/Request/LoginRequest.ts";
+import type {RegisterRequest} from "../../models/DTOModels/Request/RegisterRequest.ts";
+import {UserRole} from "../../models/DTOModels/Еnums/UserRole.ts";
+import {authApi} from "../../apis/authApi.ts";
+import {hasValue} from "../../utils/hasValue.ts";
+import {authLocalService} from "../../storageServices/authLocalService.ts";
 
 const {Title} = Typography;
 
