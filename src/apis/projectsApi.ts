@@ -3,9 +3,9 @@ import {type RequestOptions, type ResponseOptions} from "../apiService/ApiServic
 import type {CreateProjectRequest} from "../models/DTOModels/Request/CreateProjectRequest.ts";
 import type {UpdateProjectRequest} from "../models/DTOModels/Request/UpdateProjectRequest.ts";
 import type {SimpleCommandResult} from "../models/DTOModels/Response/SimpleCommandResult.ts";
-import type {ProjectResponse} from "../models/DTOModels/Response/ReportResponse.ts";
 import type {ShortProjectResponse} from "../models/DTOModels/Response/ShortReportResponse.ts";
 import { createApiService } from "../apiService/createApiService.ts";
+import type {ProjectResponse} from "../models/DTOModels/Response/ProjectResponse.ts";
 
 const { get, post, remove, patch } = createApiService(`${env.REACT_APP_SERVICE_SERVICE_HOST}${env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS}`);
 
@@ -41,12 +41,12 @@ export const projectApi = {
      * Получает список всех проектов.
      * @returns {Promise<ResponseOptions<ShortProjectResponse>>} Промис со списком проектов или ошибкой.
      */
-    getAllProjects: async (): Promise<ResponseOptions<ShortProjectResponse>> => {
+    getAllProjects: async (): Promise<ResponseOptions<ShortProjectResponse[]>> => {
         const options: RequestOptions<never> = {
             errorContext: 'Ошибка получения проектов',
             errorText: `Не удалось загрузить список проектов`,
         };
-        return await get<ShortProjectResponse>(projectApi.endPoints.all, options);
+        return await get<ShortProjectResponse[]>(projectApi.endPoints.all, options);
     },
 
     /**
