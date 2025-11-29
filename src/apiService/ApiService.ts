@@ -1,6 +1,4 @@
 import {ApiError} from "../models/common/ApiError.ts";
-import {hasValue} from "../utils/hasValue.ts";
-import {authApi} from "../apis/authApi.ts";
 import {authLocalService} from "../storageServices/authLocalService.ts";
 
 /**
@@ -107,14 +105,15 @@ class ApiService {
 
             if (!response.ok) {
                 if (response.status === 401 && authLocalService.getToken() && authLocalService.getRefreshToken()) {
-                    const res = await authApi.refresh({
-                        token: authLocalService.getToken()!,
-                        refreshToken: authLocalService.getRefreshToken()!
-                    });
-                    if(!hasValue(res.data)) {
-                        authLocalService.clearIdentityData();
-                        window.location.href = '/';
-                    }
+                    // const res = await authApi.refresh({
+                    //     token: authLocalService.getToken()!,
+                    //     refreshToken: authLocalService.getRefreshToken()!
+                    // });
+                    // if(!hasValue(res.data)) {
+                    //     authLocalService.clearIdentityData();
+                    //     window.location.href = '/';
+                    // }
+                    window.location.href = '/';
                 } else {
                     try {
                         errorBody = await response.json();

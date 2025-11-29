@@ -1,13 +1,18 @@
 import { Button, Dropdown } from "antd";
 import { LogoutOutlined, PlusOutlined, ReloadOutlined, DownOutlined } from "@ant-design/icons";
+import {authLocalService} from "../../storageServices/authLocalService.ts";
 
 interface Props {
     onNewProject: () => void;
     onRefresh: () => void;
-    onLogout: () => void;
 }
 
-export const HeaderActions = ({ onNewProject, onRefresh, onLogout }: Props) => {
+export const HeaderActions = ({ onNewProject, onRefresh }: Props) => {
+    const onLogout = () => {
+        authLocalService.clearIdentityData();
+        window.location.href = '/';
+    }
+
     const items = [
         {
             key: "new",

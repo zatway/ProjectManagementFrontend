@@ -8,6 +8,7 @@ import {AddProjectModal} from "../ProjectsComponents/AddProjectModal.tsx";
 import {projectApi} from "../../apis/projectsApi.ts";
 import {hasValue} from "../../utils/hasValue.ts";
 import type {CreateProjectRequest} from "../../models/DTOModels/Request/CreateProjectRequest.ts";
+import type {IProjectActions} from "../ProjectsComponents/columns.tsx";
 
 const {Header, Sider, Content} = Layout;
 const {Title} = Typography;
@@ -39,6 +40,14 @@ const ProjectsPage = () => {
         setAddModalOpen(false);
     }
 
+    const actionsItem: IProjectActions = {
+        generateReport: async () => {},
+        openReportsList: async() => {},
+        addStage: async() => {},
+        openStagesList: async() => {},
+        delete: async() => {},
+    }
+
     return (
         <Layout style={{minHeight: "100vh"}}>
             <Header
@@ -57,9 +66,9 @@ const ProjectsPage = () => {
 
                     <HeaderActions
                         onNewProject={() => setAddModalOpen(true)}
-                        onRefresh={() => setFilteredData([])}
-                        onLogout={() => console.log("logout")}
+                        onRefresh={() => fetchProjects()}
                     />
+
                     <AddProjectModal
                         open={isAddModalOpen}
                         onCancel={() => setAddModalOpen(false)}
@@ -79,6 +88,7 @@ const ProjectsPage = () => {
                 >
                     <FiltersPanel
                         filteredData={filteredData}
+                        originalData={originalProjectsList}
                         setFilteredData={setFilteredData}
                     />
                 </Sider>
@@ -91,7 +101,7 @@ const ProjectsPage = () => {
                         padding: "16px"
                     }}
                 >
-                    <ProjectTable data={filteredData}/>
+                    <ProjectTable data={filteredData} actions={actionsItem}/>
                 </Content>
             </Layout>
         </Layout>

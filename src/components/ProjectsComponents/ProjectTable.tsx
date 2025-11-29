@@ -1,16 +1,17 @@
 import { Table } from "antd";
-import { getColumns } from "./columns.tsx";
+import {getColumns, type IProjectActions} from "./columns.tsx";
 import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortReportResponse.ts";
 import type {FC} from "react";
 
 interface ProjectTableProps {
-    data: ShortProjectResponse[]
+    data: ShortProjectResponse[];
+    actions: IProjectActions
 }
 
-export const ProjectTable: FC<ProjectTableProps> = ({ data }) => {
+export const ProjectTable: FC<ProjectTableProps> = ({ data, actions }) => {
     return (
         <Table
-            columns={getColumns()}
+            columns={getColumns(actions)}
             dataSource={data}
             rowKey="projectId"
             pagination={{

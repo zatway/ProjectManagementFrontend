@@ -3,7 +3,7 @@ import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import dayjs, { type Dayjs } from "dayjs";
 import { ProjectStatus } from "../../models/DTOModels/Еnums/ProjectStatus.ts";
 import { getProjectStatusLabel } from "../../utils/getStatusConfig.ts";
-import {type FC, useState} from "react";
+import {type FC, type RefObject, useEffect, useState} from "react";
 import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortReportResponse.ts";
 
 const { RangePicker } = DatePicker;
@@ -12,17 +12,22 @@ const { Text } = Typography;
 interface FiltersPanelProps {
     filteredData: ShortProjectResponse[]
     setFilteredData: (filteredData: ShortProjectResponse[]) => void;
+    originalData:  RefObject<ShortProjectResponse[]>;
 }
 
-export const FiltersPanel: FC<FiltersPanelProps> = ({setFilteredData, filteredData}) => {
+export const FiltersPanel: FC<FiltersPanelProps> = ({setFilteredData, filteredData, originalData}) => {
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState<ProjectStatus | undefined>(undefined);
     const [dates, setDates] = useState<[Dayjs, Dayjs] | null>(null);
 
-    const filterData = () => {
-        let filtered = [...filteredData];
+    useEffect(() => {
+        filterData();
+    }, [search, status, dates]);
 
-        if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+    const filterData = () => {
+        let filtered = [...originalData.current];
+
+        if (search.trim()) filtered = filtered.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
 
         if (status) filtered = filtered.filter(p => p.status === status);
 
@@ -41,7 +46,7 @@ export const FiltersPanel: FC<FiltersPanelProps> = ({setFilteredData, filteredDa
         setSearch("");
         setStatus(undefined);
         setDates(null);
-        setFilteredData([]);
+        setFilteredData(originalData.current);
     };
 
     return (
@@ -54,7 +59,6 @@ export const FiltersPanel: FC<FiltersPanelProps> = ({setFilteredData, filteredDa
                         value={search}
                         onChange={e => {
                             setSearch(e.target.value);
-                            filterData();
                         }}
                     />
                 </Col>
@@ -66,7 +70,6 @@ export const FiltersPanel: FC<FiltersPanelProps> = ({setFilteredData, filteredDa
                         value={status}
                         onChange={value => {
                             setStatus(value as ProjectStatus);
-                            filterData();
                         }}
                         allowClear
                     >
