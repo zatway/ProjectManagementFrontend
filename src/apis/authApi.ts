@@ -53,7 +53,7 @@ export const authApi = {
     },
 
     /**
-     * Получает действующий access token по refreshToken.
+     * Выполняет регистрацию в систему с использованием данных для регистрации.
      * @param registerData - Данные для регистрации пользователя
      * @returns {Promise<ResponseOptions<SimpleCommandResult>>} Промис с результатом авторизации.
      */

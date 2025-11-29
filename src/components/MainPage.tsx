@@ -1,6 +1,6 @@
 import type {FC} from "react";
 
-const LoginPage: FC = () => {
+const MainPage: FC = () => {
     return (
         <div>
 
@@ -8,4 +8,4 @@ const LoginPage: FC = () => {
     );
 };
 
-export default LoginPage;
+export default MainPage;
