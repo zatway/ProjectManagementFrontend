@@ -1,10 +1,11 @@
-export interface ProjectResponse {
+import type {ReportType} from "../Еnums/ReportType.ts";
+import type {ReportStatus} from "../Еnums/ReportStatus.ts";
+
+export interface ReportResponse {
+    reportId: number;
     projectId: number;
-    name: string;
-    description: string;
-    budget: number;
-    startDate: Date | string;
-    endDate: Date | string;
-    status: string;
-    stagesCount: number;
+    reportType: ReportType;
+    status: ReportStatus;
+    generatedAt: Date;
+    projectName: string;
 }
