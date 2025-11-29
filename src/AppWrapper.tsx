@@ -8,6 +8,7 @@ interface AppWrapperPropsInterface {
 const AppWrapper: FC<AppWrapperPropsInterface> = ({children}) => {
     const customTheme = {
         algorithm: theme.defaultAlgorithm,
+        background: '#f0f2f5',
         token: {
             colorPrimary: '#208100',
             colorSuccess: '#52c41a',
