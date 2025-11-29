@@ -3,12 +3,12 @@ import type { MenuProps } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 
-import {getProjectStatusColor, getProjectStatusLabel} from "../../utils/getStatusConfig";
+import {getProjectStatusColor, getProjectStatusLabel} from "../../utils/getStatusConfig.ts";
 
-import type { ShortProjectResponse } from "../../models/DTOModels/Response/ShortReportResponse";
-import { ProjectStatus } from "../../models/DTOModels/Еnums/ProjectStatus";
+import type { ShortProjectResponse } from "../../models/DTOModels/Response/ShortReportResponse.ts";
+import { ProjectStatus } from "../../models/DTOModels/Еnums/ProjectStatus.ts";
 
-import { ProjectActionsDropdown } from "../UI/ProjectActionsDropdown";
+import { ProjectActionsDropdown } from "./ProjectActionsDropdown.tsx";
 
 export const projectActionsItems: MenuProps["items"] = [
     { key: "download", label: "Скачать отчёт", onClick: () => {} },

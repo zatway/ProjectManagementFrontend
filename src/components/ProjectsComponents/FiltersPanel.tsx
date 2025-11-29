@@ -1,34 +1,49 @@
 import { Input, Select, DatePicker, Row, Col, Space, Button, Typography } from "antd";
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
-import type { Dayjs } from "dayjs";
-import { ProjectStatus } from "../../models/DTOModels/Еnums/ProjectStatus";
-import { getProjectStatusLabel } from "../../utils/getStatusConfig";
+import dayjs, { type Dayjs } from "dayjs";
+import { ProjectStatus } from "../../models/DTOModels/Еnums/ProjectStatus.ts";
+import { getProjectStatusLabel } from "../../utils/getStatusConfig.ts";
+import {type FC, useState} from "react";
+import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortReportResponse.ts";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
 
-interface Props {
-    search: string;
-    status: ProjectStatus | undefined;
-    dateRange: [Dayjs, Dayjs] | null;
-    resultsCount: number;
-
-    onSearch: (s: string) => void;
-    onStatusChange: (s: ProjectStatus | undefined) => void;
-    onDateChange: (d: [Dayjs, Dayjs] | null) => void;
-    onClear: () => void;
+interface FiltersPanelProps {
+    filteredData: ShortProjectResponse[]
+    setFilteredData: (filteredData: ShortProjectResponse[]) => void;
 }
 
-export const FiltersPanel = ({
-                                 search,
-                                 status,
-                                 dateRange,
-                                 resultsCount,
-                                 onSearch,
-                                 onStatusChange,
-                                 onDateChange,
-                                 onClear
-                             }: Props) => {
+export const FiltersPanel: FC<FiltersPanelProps> = ({setFilteredData, filteredData}) => {
+    const [search, setSearch] = useState("");
+    const [status, setStatus] = useState<ProjectStatus | undefined>(undefined);
+    const [dates, setDates] = useState<[Dayjs, Dayjs] | null>(null);
+
+    const filterData = () => {
+        let filtered = [...filteredData];
+
+        if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+
+        if (status) filtered = filtered.filter(p => p.status === status);
+
+        if (dates) {
+            const [start, end] = dates;
+            filtered = filtered.filter(p => {
+                const ds = dayjs(p.startDate);
+                return !ds.isBefore(start) && !ds.isAfter(end);
+            });
+        }
+
+        setFilteredData(filtered);
+    };
+
+    const clearFilters = () => {
+        setSearch("");
+        setStatus(undefined);
+        setDates(null);
+        setFilteredData([]);
+    };
+
     return (
         <>
             <Row gutter={[0, 16]}>
@@ -37,7 +52,10 @@ export const FiltersPanel = ({
                         placeholder="Поиск по названию проекта..."
                         prefix={<SearchOutlined />}
                         value={search}
-                        onChange={e => onSearch(e.target.value)}
+                        onChange={e => {
+                            setSearch(e.target.value);
+                            filterData();
+                        }}
                     />
                 </Col>
 
@@ -46,7 +64,10 @@ export const FiltersPanel = ({
                         placeholder="Фильтр по статусу"
                         style={{ width: "100%" }}
                         value={status}
-                        onChange={onStatusChange}
+                        onChange={value => {
+                            setStatus(value as ProjectStatus);
+                            filterData();
+                        }}
                         allowClear
                     >
                         {Object.values(ProjectStatus).map(v => (
@@ -60,8 +81,8 @@ export const FiltersPanel = ({
                 <Col span={24}>
                     <RangePicker
                         style={{ width: "100%" }}
-                        value={dateRange}
-                        onChange={d => onDateChange(d ? [d[0]!, d[1]!] : null)}
+                        value={dates}
+                        onChange={d => setDates(d ? [d[0]!, d[1]!] : null)}
                         format="DD.MM.YYYY"
                         placeholder={["Дата начала", "Дата окончания"]}
                     />
@@ -77,13 +98,13 @@ export const FiltersPanel = ({
                     border: "1px solid #d9d9d9"
                 }}
             >
-                <Space direction="vertical" style={{ width: "100%" }}>
-                    <Text strong>Результаты: {resultsCount}</Text>
+                <Space style={{ width: "100%" }}>
+                    <Text strong>Результаты: {filteredData.length}</Text>
 
                     <Button
                         type="link"
                         icon={<FilterOutlined />}
-                        onClick={onClear}
+                        onClick={clearFilters}
                         style={{ padding: 0 }}
                     >
                         Очистить фильтры

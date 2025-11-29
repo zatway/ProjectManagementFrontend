@@ -7,6 +7,8 @@ import type {RefreshTokenRequest} from "../models/DTOModels/Request/RefreshToken
 import type {RegisterRequest} from "../models/DTOModels/Request/RegisterRequest.ts";
 import type {SimpleCommandResult} from "../models/DTOModels/Response/SimpleCommandResult.ts";
 
+const authService = new ApiService(env.REACT_APP_SERVICE_SERVICE_HOST);
+
 /**
  * API-сервис для работы с аутентификацией.
  * Предоставляет методы для входа в систему, выхода и обновления токена авторизации.
@@ -68,4 +70,3 @@ export const authApi = {
     },
 };
 
-const authService = new ApiService(env.REACT_APP_SERVICE_SERVICE_HOST);

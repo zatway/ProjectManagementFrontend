@@ -57,8 +57,6 @@ class ApiService {
     /**
      * Создает экземпляр ApiService.
      * @param baseUrl - Базовый URL для API-запросов.
-     * @param timeout - Таймаут запроса в миллисекундах (необязательный, по умолчанию 10000 мс).
-     * @param refreshToken - Функция обновления токена.
      */
     constructor(baseUrl: string) {
         this.baseUrl = baseUrl;
