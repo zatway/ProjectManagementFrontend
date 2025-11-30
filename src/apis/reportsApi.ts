@@ -3,7 +3,7 @@ import {type RequestOptions, type ResponseOptions} from "../apiService/ApiServic
 import {createApiService} from "../apiService/createApiService.ts";
 import type {GenerateReportRequest} from "../models/DTOModels/Request/GenerateReportRequest.ts";
 import type {ReportResponse} from "../models/DTOModels/Response/ReportResponse.ts";
-import type {ShortProjectResponse} from "../models/DTOModels/Response/ShortReportResponse.ts";
+import type {ShortReportResponse} from "../models/DTOModels/Response/ShortReportResponse.ts";
 
 const { get, post } = createApiService(env.REACT_APP_SERVICE_SERVICE_HOST);
 
@@ -56,12 +56,12 @@ export const reportsApi = {
      * @param projectId - Идентификатор проекта.
      * @returns {Promise<ResponseOptions<ShortProjectResponse[]>>} Промис со списком отчетов или ошибкой.
      */
-    getReportsByProject: async (projectId: number): Promise<ResponseOptions<ShortProjectResponse[]>> => {
+    getReportsByProject: async (projectId: number): Promise<ResponseOptions<ShortReportResponse[]>> => {
         const options: RequestOptions<never> = {
             errorContext: 'Ошибка получения отчетов',
             errorText: `Не удалось загрузить отчеты проекта`,
         };
         const endpoint = `${reportsApi.endPoints.projectReports}/${projectId}/reports`;
-        return await get<ShortProjectResponse[]>(endpoint, options);
+        return await get<ShortReportResponse[]>(endpoint, options);
     },
 };

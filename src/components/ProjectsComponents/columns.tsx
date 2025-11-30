@@ -1,4 +1,4 @@
-import {Button, Badge, Space} from "antd";
+import {Button, Badge, Space, Popconfirm} from "antd";
 import type {MenuProps} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import dayjs from "dayjs";
@@ -11,19 +11,29 @@ import {ProjectStatus} from "../../models/DTOModels/Еnums/ProjectStatus.ts";
 import {ProjectActionsDropdown} from "./ProjectActionsDropdown.tsx";
 
 export interface IProjectActions {
-    generateReport: () => Promise<void>;
-    openReportsList: () => Promise<void>;
-    addStage: () => Promise<void>;
-    openStagesList: () => Promise<void>;
-    delete: () => Promise<void>;
+    openReportsList: (record: ShortProjectResponse) => Promise<void>;
+    openStagesList: (record: ShortProjectResponse) => Promise<void>;
+    delete: (record: ShortProjectResponse) => Promise<void>;
 }
 
-export const projectActionsItems = (actions: IProjectActions): MenuProps["items"] => [
-    {key: "generateReport", label: "Сгенерировать отчёт", onClick: actions.generateReport},
-    {key: "reportsList", label: "Список отчетов", onClick: actions.openReportsList},
-    {key: "addStage", label: "Добавить этап", onClick: actions.addStage},
-    {key: "stagesList", label: "Список этапов", onClick: actions.openStagesList},
-    {key: "delete", label: "Удалить", onClick: actions.delete},
+export const projectActionsItems = (actions: IProjectActions, record: ShortProjectResponse): MenuProps["items"] => [
+    {key: "reportsList", label: "Список отчетов", onClick: () => actions.openReportsList(record)},
+    {key: "stagesList", label: "Список этапов", onClick: () => actions.openStagesList(record)},
+    {
+        key: "delete",
+        label: (
+            <Popconfirm
+                title="Удалить проект?"
+                description={`Вы действительно хотите удалить проект "${record.name}"?`}
+                okText="Да"
+                cancelText="Отмена"
+                onConfirm={() => actions.delete(record)}
+            >
+                <span onClick={(e: React.MouseEvent<HTMLSpanElement>) => e.stopPropagation()}
+                      style={{color: "red"}}>Удалить</span>
+            </Popconfirm>
+        ),
+    },
 ];
 
 export const getColumns = (actions: IProjectActions): ColumnsType<ShortProjectResponse> => [
@@ -64,7 +74,7 @@ export const getColumns = (actions: IProjectActions): ColumnsType<ShortProjectRe
                 >
                     Редактировать
                 </Button>
-                <ProjectActionsDropdown items={projectActionsItems(actions)} />
+                <ProjectActionsDropdown items={projectActionsItems(actions, record)}/>
             </Space>
         )
     }

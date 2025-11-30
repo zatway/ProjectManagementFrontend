@@ -3,9 +3,9 @@ import {type RequestOptions, type ResponseOptions} from "../apiService/ApiServic
 import type {CreateProjectRequest} from "../models/DTOModels/Request/CreateProjectRequest.ts";
 import type {UpdateProjectRequest} from "../models/DTOModels/Request/UpdateProjectRequest.ts";
 import type {SimpleCommandResult} from "../models/DTOModels/Response/SimpleCommandResult.ts";
-import type {ShortProjectResponse} from "../models/DTOModels/Response/ShortReportResponse.ts";
 import { createApiService } from "../apiService/createApiService.ts";
 import type {ProjectResponse} from "../models/DTOModels/Response/ProjectResponse.ts";
+import type {ShortProjectResponse} from "../models/DTOModels/Response/ShortProjectResponse.ts";
 
 const { get, post, remove, patch } = createApiService(`${env.REACT_APP_SERVICE_SERVICE_HOST}${env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS}`);
 

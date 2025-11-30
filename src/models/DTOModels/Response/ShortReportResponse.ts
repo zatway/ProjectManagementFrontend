@@ -1,9 +1,11 @@
-import type {ProjectStatus} from "../Еnums/ProjectStatus.ts";
+import type {ReportType} from "../Еnums/ReportType.ts";
+import type {ReportStatus} from "../Еnums/ReportStatus.ts";
 
-export interface ShortProjectResponse {
-    projectId: number;
-    name: string;
-    startDate: Date;
-    endDate: Date;
-    status: ProjectStatus;
+export interface ShortReportResponse {
+    reportId: number;
+    projectName: string;
+    reportType: ReportType;
+    generatedAt: Date;
+    status: ReportStatus;
+    targetFileName?: string;
 }

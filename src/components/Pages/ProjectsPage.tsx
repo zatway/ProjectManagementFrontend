@@ -1,6 +1,5 @@
 import {useState, useRef, useEffect} from "react";
 import {Layout, Typography} from "antd";
-import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortReportResponse.ts";
 import {HeaderActions} from "../HeaderActions/HeaderActions.tsx";
 import {FiltersPanel} from "../ProjectsComponents/FiltersPanel.tsx";
 import {ProjectTable} from "../ProjectsComponents/ProjectTable.tsx";
@@ -9,6 +8,7 @@ import {projectApi} from "../../apis/projectsApi.ts";
 import {hasValue} from "../../utils/hasValue.ts";
 import type {CreateProjectRequest} from "../../models/DTOModels/Request/CreateProjectRequest.ts";
 import type {IProjectActions} from "../ProjectsComponents/columns.tsx";
+import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortProjectResponse.ts";
 
 const {Header, Sider, Content} = Layout;
 const {Title} = Typography;
@@ -41,11 +41,16 @@ const ProjectsPage = () => {
     }
 
     const actionsItem: IProjectActions = {
-        generateReport: async () => {},
-        openReportsList: async() => {},
-        addStage: async() => {},
-        openStagesList: async() => {},
-        delete: async() => {},
+        openReportsList: async (record) => {
+            window.location.href = `/projects/${record.projectId}/reports`;
+        },
+        openStagesList: async (record) => {
+            window.location.href = `/projects/${record.projectId}/stages`;
+        },
+        delete: async (record) => {
+            const res = await projectApi.deleteProject(record.projectId);
+            if (hasValue(res.data)) await fetchProjects();
+        },
     }
 
     return (
