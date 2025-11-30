@@ -27,7 +27,7 @@ const EditProjectModal: FC<EditProjectModalProps> = ({ projectId, open, initialV
 
     const handleSave = async () => {
         try {
-            const values = await form.validateFields();
+            const values = await form?.validateFields?.();
             const req = buildUpdatePayload(values);
             const res = await projectApi.updateProject(projectId, req);
             if (!res.error) {

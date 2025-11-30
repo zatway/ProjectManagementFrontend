@@ -2,7 +2,7 @@ export interface CreateStageRequest {
     name: string;
     stageType: string;
     progressPercent: number;
-    deadline: Date | string;
+    deadline: string;
     status: string;
     specialistUserId: number;
 }

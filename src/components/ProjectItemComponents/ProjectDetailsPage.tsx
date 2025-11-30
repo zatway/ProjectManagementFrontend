@@ -1,4 +1,3 @@
-// ProjectDetailsPage.tsx
 import {useParams} from "react-router-dom";
 import {type FC, useEffect, useState} from "react";
 import {Layout, Tabs, Spin, Typography, Button} from "antd";
@@ -8,9 +7,6 @@ import ProjectHeader from "./ProjectHeader.tsx";
 import ProjectInfo from "./ProjectInfo.tsx";
 import StagesTable from "./StagesComponent/StagesTable.tsx";
 import ReportsTable from "./ReportsComponents/ReportsTable.tsx";
-import EditStageModal from "./StagesComponent/EditStageModal.tsx";
-import GenerateReportModal from "./ReportsComponents/GenerateReportModal.tsx";
-import EditProjectModal from "./EditProjectModal.tsx";
 
 const {Header, Content} = Layout;
 const {Title} = Typography;
@@ -45,7 +41,7 @@ const ProjectDetailsPage: FC<ProjectDetailsPageProps> = ({openedTab}) => {
     if (!project) return <Title level={3}>Проект не найден</Title>;
 
     const tabs = [
-        { key: "projectDetails", label: "Детали проекта", children: <ProjectInfo project={project} /> },
+        { key: "projectDetails", label: "Детали проекта", children: <ProjectInfo initProject={project} /> },
         { key: "stagesList", label: "Этапы", children: <StagesTable projectId={Number(projectId)} /> },
         { key: "reportsList", label: "Отчёты", children: <ReportsTable projectId={Number(projectId)} /> },
     ];

@@ -5,23 +5,31 @@ import { getProjectStatusColor, getProjectStatusLabel } from '../../utils/getSta
 import type { ProjectResponse } from '../../models/DTOModels/Response/ProjectResponse.ts';
 import EditProjectModal from './EditProjectModal';
 import type {UpdateProjectRequest} from "../../models/DTOModels/Request/UpdateProjectRequest.ts";
+import {projectApi} from "../../apis/projectsApi.ts";
+import {hasValue} from "../../utils/hasValue.ts";
 
 interface ProjectInfoProps {
-    project: ProjectResponse;
-    onUpdated: () => void;
+    initProject: ProjectResponse;
 }
 
-const ProjectInfo = ({ project, onUpdated }: ProjectInfoProps) => {
+const ProjectInfo = ({ initProject }: ProjectInfoProps) => {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const [project, setProject] = useState<ProjectResponse>(initProject);
 
     const initialValues: UpdateProjectRequest = {
         name: project.name,
         description: project.description,
         budget: project.budget,
-        startDate: dayjs(project.startDate),
-        endDate: dayjs(project.endDate),
+        startDate: project.startDate,
+        endDate: project.endDate,
         status: project.status
     };
+
+    const onUpdated = async () => {
+    const res = await projectApi.getDetailsProject(initProject.projectId);
+    if(hasValue(res.data))
+        setProject(res.data);
+    }
 
     return (
         <>
