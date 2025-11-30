@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Descriptions, Badge, Button } from 'antd';
 import dayjs from 'dayjs';
-import { getProjectStatusColor, getProjectStatusLabel } from '../../utils/getStatusConfig';
+import { getProjectStatusColor, getProjectStatusLabel } from '../../utils/enumConverter.ts';
 import type { ProjectResponse } from '../../models/DTOModels/Response/ProjectResponse.ts';
 import EditProjectModal from './EditProjectModal';
 import type {UpdateProjectRequest} from "../../models/DTOModels/Request/UpdateProjectRequest.ts";

@@ -1,7 +1,7 @@
 import { Table } from "antd";
 import {getColumns, type IProjectActions} from "./columns.tsx";
-import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortReportResponse.ts";
 import type {FC} from "react";
+import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortProjectResponse.ts";
 
 interface ProjectTableProps {
     data: ShortProjectResponse[];

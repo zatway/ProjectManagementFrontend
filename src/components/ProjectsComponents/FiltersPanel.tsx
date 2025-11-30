@@ -2,9 +2,9 @@ import { Input, Select, DatePicker, Row, Col, Space, Button, Typography } from "
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import dayjs, { type Dayjs } from "dayjs";
 import { ProjectStatus } from "../../models/DTOModels/Еnums/ProjectStatus.ts";
-import { getProjectStatusLabel } from "../../utils/getStatusConfig.ts";
+import { getProjectStatusLabel } from "../../utils/enumConverter.ts";
 import {type FC, type RefObject, useEffect, useState} from "react";
-import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortReportResponse.ts";
+import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortProjectResponse.ts";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;

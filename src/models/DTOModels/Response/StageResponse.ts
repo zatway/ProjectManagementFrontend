@@ -9,6 +9,6 @@ export interface StageResponse {
     stageType: StageType;
     progressPercent: number;
     status: StageStatus;
-    deadline: Date;
+    deadline: string;
     specialistUserFullName: string;
 }

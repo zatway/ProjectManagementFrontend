@@ -6,6 +6,6 @@ export interface ReportResponse {
     projectId: number;
     reportType: ReportType;
     status: ReportStatus;
-    generatedAt: Date;
+    generatedAt: string;
     projectName: string;
 }

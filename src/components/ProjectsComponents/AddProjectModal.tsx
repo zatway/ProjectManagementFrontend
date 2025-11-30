@@ -11,16 +11,8 @@ interface AddProjectModalProps {
 export const AddProjectModal: FC<AddProjectModalProps> = ({ open, onCancel, onSave }) => {
     const [form] = Form.useForm();
 
-    const handleFinish = (values: any) => {
-        const payload: CreateProjectRequest = {
-            name: values.name,
-            description: values.description,
-            budget: values.budget,
-            startDate: values.dates[0].toISOString(),
-            endDate: values.dates[1].toISOString(),
-        };
-
-        onSave(payload);
+    const handleFinish = (values: CreateProjectRequest) => {
+        onSave(values);
         form.resetFields();
     };
 

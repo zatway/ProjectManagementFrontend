@@ -3,6 +3,6 @@ export interface UpdateProjectRequest {
     description?: string;
     status?: string;
     budget?: number;
-    startDate?: Date | string;
-    endDate?: Date | string;
+    startDate?: string;
+    endDate?: string;
 }

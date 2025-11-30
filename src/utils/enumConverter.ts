@@ -1,7 +1,10 @@
 import {ReportStatus} from "../models/DTOModels/Еnums/ReportStatus.ts";
 import {ProjectStatus} from "../models/DTOModels/Еnums/ProjectStatus.ts";
+import {ReportType} from "../models/DTOModels/Еnums/ReportType.ts";
+import {StageStatus} from "../models/DTOModels/Еnums/StageStatus.ts";
+import {StageType} from "../models/DTOModels/Еnums/StageType.ts";
 
-export const getReportStatusColor = (status: ReportStatus) => {
+export const getReportStatusConfig = (status: ReportStatus) => {
     switch (status) {
         case ReportStatus.Pending:
             return {color: "blue", text: "Планирование"};
@@ -15,6 +18,15 @@ export const getReportStatusColor = (status: ReportStatus) => {
             return {color: "default", text: status};
     }
 };
+
+export const getReportType = (type: ReportType) => {
+    switch (type) {
+        case ReportType.ExcelKpi:
+            return 'Экспорт данных в Excel для KPI'
+        case ReportType.PdfAct:
+            return 'PDF-отчет по шаблону ГОСТ (Акт)'
+    }
+}
 
 export const getProjectStatusColor = (status: ProjectStatus) => {
     switch (status) {
@@ -46,5 +58,31 @@ export const getProjectStatusLabel = (status: ProjectStatus) => {
         case ProjectStatus.Canceled:
             return 'Отменен';
 
+    }
+}
+
+export const getStageStatusLabel = (stageStatus: StageStatus) => {
+    switch (stageStatus) {
+        case StageStatus.Pending:
+            return 'Ожидает начала выполнения';
+        case StageStatus.InProgress:
+            return 'В процессе выполнения';
+        case StageStatus.Completed:
+            return 'Выполнено';
+        case StageStatus.Delayed:
+            return 'Просрочено';
+    }
+}
+
+export const getStageTypeLabel = (stageType: StageType) => {
+    switch (stageType) {
+        case StageType.Exploration:
+            return 'Изыскательские работы';
+        case StageType.Design:
+            return 'Проектирование';
+        case StageType.Installation:
+            return 'Монтажные работы';
+        case StageType.Testing:
+            return 'Тестирование и отладка';
     }
 }

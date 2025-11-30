@@ -5,7 +5,7 @@ export interface ShortReportResponse {
     reportId: number;
     projectName: string;
     reportType: ReportType;
-    generatedAt: Date;
+    generatedAt: string;
     status: ReportStatus;
     targetFileName?: string;
 }

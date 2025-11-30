@@ -5,8 +5,8 @@ export interface ProjectResponse {
     name: string;
     description: string;
     budget: number;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     status: ProjectStatus;
     stagesCount: number;
 }

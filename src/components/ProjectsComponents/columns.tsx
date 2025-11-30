@@ -2,13 +2,13 @@ import {Button, Badge, Space, Popconfirm} from "antd";
 import type {MenuProps} from "antd";
 import type {ColumnsType} from "antd/es/table";
 import dayjs from "dayjs";
-
-import {getProjectStatusColor, getProjectStatusLabel} from "../../utils/getStatusConfig.ts";
-
-import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortReportResponse.ts";
 import {ProjectStatus} from "../../models/DTOModels/Еnums/ProjectStatus.ts";
 
+import {getProjectStatusColor, getProjectStatusLabel} from "../../utils/enumConverter.ts";
+
+
 import {ProjectActionsDropdown} from "./ProjectActionsDropdown.tsx";
+import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortProjectResponse.ts";
 
 export interface IProjectActions {
     openReportsList: (record: ShortProjectResponse) => Promise<void>;
