@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Checkbox, Select, message } from 'antd';
+import { Modal, Form, Input, Select, message } from 'antd';
 import { reportsApi } from '../../../apis/reportsApi';
 import { stagesApi } from '../../../apis/stagesApi';
 import {useEffect, useState, type FC } from 'react';
@@ -34,10 +34,10 @@ const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, on
                 stageId: values.stageId || undefined,
                 reportType: values.reportType,
                 targetFileName: values.targetFileName,
-                reportConfig: JSON.stringify({
-                    IncludeProgress: values.includeProgress ?? true,
-                    IncludeDeadline: values.includeDeadline ?? true
-                })
+                // reportConfig: JSON.stringify({
+                //     IncludeProgress: values.includeProgress ?? true,
+                //     IncludeDeadline: values.includeDeadline ?? true
+                // })
             };
             const res = await reportsApi.generateReport(req);
             if (!res.error) {
@@ -76,13 +76,13 @@ const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, on
                     <Input placeholder="Введите имя файла" />
                 </Form.Item>
 
-                <Form.Item name="includeProgress" valuePropName="checked">
-                    <Checkbox>Включать прогресс</Checkbox>
-                </Form.Item>
+                {/*<Form.Item name="includeProgress" valuePropName="checked">*/}
+                {/*    <Checkbox>Включать прогресс</Checkbox>*/}
+                {/*</Form.Item>*/}
 
-                <Form.Item name="includeDeadline" valuePropName="checked">
-                    <Checkbox>Включать сроки</Checkbox>
-                </Form.Item>
+                {/*<Form.Item name="includeDeadline" valuePropName="checked">*/}
+                {/*    <Checkbox>Включать сроки</Checkbox>*/}
+                {/*</Form.Item>*/}
             </Form>
         </Modal>
     );

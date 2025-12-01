@@ -104,15 +104,8 @@ class ApiService {
             });
 
             if (!response.ok) {
-                if (response.status === 401 && authLocalService.getToken() && authLocalService.getRefreshToken()) {
-                    // const res = await authApi.refresh({
-                    //     token: authLocalService.getToken()!,
-                    //     refreshToken: authLocalService.getRefreshToken()!
-                    // });
-                    // if(!hasValue(res.data)) {
-                    //     authLocalService.clearIdentityData();
-                    //     window.location.href = '/';
-                    // }
+                if (response.status === 401) {
+                    authLocalService.clearIdentityData()
                     window.location.href = '/';
                 } else {
                     try {

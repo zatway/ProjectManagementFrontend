@@ -14,7 +14,7 @@ export const usersApi = {
      * Эндпоинты для API-запросов этапов.
      */
     endPoints: {
-        all: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS_ALL,
+        all: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_USERS_ALL
     },
 
     /**

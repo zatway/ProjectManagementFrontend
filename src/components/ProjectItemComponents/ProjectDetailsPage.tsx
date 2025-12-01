@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {type FC, useEffect, useState} from "react";
-import {Layout, Tabs, Spin, Typography, Button} from "antd";
+import {Layout, Tabs, Spin, Button, Result} from "antd";
 import {projectApi} from "../../apis/projectsApi";
 import type {ProjectResponse} from "../../models/DTOModels/Response/ProjectResponse.ts";
 import ProjectHeader from "./ProjectHeader.tsx";
@@ -9,7 +9,6 @@ import StagesTable from "./StagesComponent/StagesTable.tsx";
 import ReportsTable from "./ReportsComponents/ReportsTable.tsx";
 
 const {Header, Content} = Layout;
-const {Title} = Typography;
 
 interface ProjectDetailsPageProps {
     openedTab: 'projectDetails' | 'stagesList' | 'reportsList';
@@ -38,7 +37,12 @@ const ProjectDetailsPage: FC<ProjectDetailsPageProps> = ({openedTab}) => {
     }, [openedTab]);
 
     if (loading) return <Spin style={{margin: "100px auto", display: "block"}}/>;
-    if (!project) return <Title level={3}>Проект не найден</Title>;
+    if (!project) return  <Result
+        status="404"
+        title="404"
+        subTitle="Проект не найден"
+        extra={<Button type="primary" onClick={() => window.location.href = '/projects'}>Вернуться на главную</Button>}
+    />;
 
     const tabs = [
         { key: "projectDetails", label: "Детали проекта", children: <ProjectInfo initProject={project} /> },
@@ -50,7 +54,7 @@ const ProjectDetailsPage: FC<ProjectDetailsPageProps> = ({openedTab}) => {
         <Layout style={{minHeight: "100vh"}}>
             <Header style={{display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 24px", backgroundColor: "#208100"}}>
                 <ProjectHeader />
-                <Button onClick={() => window.location.href = "/ProjectsPage"}>Назад</Button>
+                <Button onClick={() => window.location.href = "/projects"}>Назад</Button>
             </Header>
             <Content style={{margin: 24, padding: 24, background: "#fff", borderRadius: 8}}>
                 <Tabs

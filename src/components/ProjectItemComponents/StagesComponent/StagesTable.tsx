@@ -6,6 +6,8 @@ import EditStageModal from "./EditStageModal.tsx";
 import {hasValue} from "../../../utils/hasValue.ts";
 import {getStageTypeLabel} from "../../../utils/enumConverter.ts";
 import AddStageModal from "./AddStageModal.tsx";
+import type {UserResponse} from "../../../models/DTOModels/Response/UserResponse.ts";
+import {usersApi} from "../../../apis/usersApi.ts";
 
 interface StagesTableProps {
     projectId: number;
@@ -15,14 +17,21 @@ const StagesTable = ({projectId}: StagesTableProps) => {
     const [stages, setStages] = useState<ShortStageResponse[]>([]);
     const [isStageModalOpen, setStageModalOpen] = useState(false);
     const [editingStage, setEditingStage] = useState<ShortStageResponse | null>(null);
+    const [users, setUsers] = useState<UserResponse[]>([]);
 
     const fetchStages = async () => {
         const res = await stagesApi.getAllStages(projectId);
         if (!res.error) setStages(res.data || []);
     };
 
+    const fetchUsers = async () => {
+        const res = await usersApi.getAllSUsers();
+        if (!res.error) setUsers(res.data || []);
+    };
+
     useEffect(() => {
         fetchStages();
+        fetchUsers();
     }, [projectId]);
 
     const deleteStage = async (stageId: number) => {
@@ -70,7 +79,7 @@ const StagesTable = ({projectId}: StagesTableProps) => {
             }}>Добавить этап</Button>
             <Table dataSource={stages} rowKey="stageId" columns={stageColumns} bordered/>
             {hasValue(editingStage) ?
-                <EditStageModal stage={editingStage} open={isStageModalOpen} onClose={() => setStageModalOpen(false)}
+                <EditStageModal users={users} stage={editingStage} open={isStageModalOpen} onClose={() => setStageModalOpen(false)}
                                 onSaved={fetchStages}/> :
                 <AddStageModal projectId={projectId} open={isStageModalOpen} onClose={() => setStageModalOpen(false)}
                                onSaved={fetchStages}/>}

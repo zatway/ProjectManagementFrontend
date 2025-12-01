@@ -1,31 +1,22 @@
 import { Modal, Form, InputNumber, DatePicker, Select, message } from 'antd';
-import {type FC, useEffect, useState} from 'react';
+import {type FC, useEffect} from 'react';
 import { stagesApi } from '../../../apis/stagesApi';
 import type { ShortStageResponse } from '../../../models/DTOModels/Response/ShortStageResponse.ts';
 import type { UserResponse } from '../../../models/DTOModels/Response/UserResponse.ts';
 import { StageStatus } from '../../../models/DTOModels/Еnums/StageStatus.ts';
-import { usersApi } from '../../../apis/usersApi.ts';
 import dayjs from "dayjs";
 import {getStageStatusLabel} from "../../../utils/enumConverter.ts";
 
 interface EditStageModalProps {
     stage: ShortStageResponse;
+    users: UserResponse[]
     open: boolean;
     onClose: () => void;
     onSaved: () => void;
 }
 
-const EditStageModal: FC<EditStageModalProps> = ({ stage, open, onClose, onSaved }) => {
+const EditStageModal: FC<EditStageModalProps> = ({ stage, users, open, onClose, onSaved }) => {
     const [form] = Form.useForm();
-    const [users, setUsers] = useState<UserResponse[]>([]);
-
-    useEffect(() => {
-        const fetchUsers = async () => {
-            const res = await usersApi.getAllSUsers();
-            if (!res.error) setUsers(res.data || []);
-        };
-        fetchUsers();
-    }, []);
 
     useEffect(() => {
         const fetchStage = async () => {

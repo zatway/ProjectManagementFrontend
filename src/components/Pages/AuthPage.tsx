@@ -27,7 +27,7 @@ const AuthPage: FC = () => {
             const res = await authApi.login(values);
             if (hasValue(res.data)) {
                 authLocalService.setIdentityData(res.data);
-                window.location.href = '/ProjectsPage';
+                window.location.href = '/projects';
             } else if (hasValue(res.error)) setError('Неверное имя пользователя или пароль.')
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || err.message || 'Ошибка авторизации';
