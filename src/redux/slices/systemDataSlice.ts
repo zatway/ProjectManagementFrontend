@@ -5,11 +5,13 @@ import {hasValue} from "../../utils/hasValue.ts";
 interface SystemDataState {
     username: string | null;
     isAuthorized: boolean;
+    isSignalRConnected: boolean;
 }
 
 const initialState: SystemDataState = {
     username: null,
     isAuthorized: hasValue(authLocalService.getToken()),
+    isSignalRConnected: false,
 };
 
 const systemDataSlice = createSlice({
@@ -23,9 +25,13 @@ const systemDataSlice = createSlice({
         logoutUser: (state) => {
             state.username = null;
             state.isAuthorized = false;
+            state.isSignalRConnected = false;
+        },
+        setSignalRConnected: (state, action: PayloadAction<boolean>) => {
+            state.isSignalRConnected = action.payload;
         },
     },
 });
 
-export const { loginUser, logoutUser } = systemDataSlice.actions;
+export const { loginUser, logoutUser, setSignalRConnected } = systemDataSlice.actions;
 export default systemDataSlice.reducer;

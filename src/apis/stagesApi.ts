@@ -33,7 +33,7 @@ export const stagesApi = {
             errorContext: 'Ошибка создания этапа',
             errorText: `Не удалось создать этап`,
         };
-        const endpoint = `${stagesApi.endPoints.projects}/${projectId}${env.REACT_APP_SERVICE_SERVICE_ENDPOINT_STAGES}`;
+        const endpoint = `${stagesApi.endPoints.projects}/${projectId}/stages`;
         return await post<CreateStageRequest, number>(endpoint, createData, options);
     },
 
@@ -47,7 +47,7 @@ export const stagesApi = {
             errorContext: 'Ошибка получения этапов',
             errorText: `Не удалось загрузить этапы проекта`,
         };
-        const endpoint = `${stagesApi.endPoints.projects}/${projectId}${env.REACT_APP_SERVICE_SERVICE_ENDPOINT_STAGES}`;
+        const endpoint = `${stagesApi.endPoints.projects}/${projectId}/stages`;
         return await get<ShortStageResponse[]>(endpoint, options);
     },
 

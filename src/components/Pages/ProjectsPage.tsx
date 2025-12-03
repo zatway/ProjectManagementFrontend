@@ -38,10 +38,6 @@ const ProjectsPage = () => {
 
         signalRService.on('ReceiveNotification', handleNotification);
 
-        if (signalRService.getConnectionState() !== 'Connected') {
-            signalRService.connect().catch(console.error);
-        }
-
         return () => {
             signalRService.off('ReceiveNotification', handleNotification);
         };
