@@ -1,23 +1,25 @@
-import { Button, Dropdown, Badge, Popover, List, Popconfirm, Typography } from "antd";
-import { LogoutOutlined, PlusOutlined, ReloadOutlined, DownOutlined, BellOutlined } from "@ant-design/icons";
+import {Button, Dropdown, Badge, Popover, List, Popconfirm, Typography} from "antd";
+import {LogoutOutlined, PlusOutlined, ReloadOutlined, DownOutlined, BellOutlined} from "@ant-design/icons";
 import {authLocalService} from "../../storageServices/authLocalService.ts";
 import {useState} from "react";
 import type {NotificationResponse} from "../../models/DTOModels/Response/SignalR/NotificationResponse.ts";
 
 interface Props {
-    onNewProject: () => void;
-    onRefresh: () => void;
+    onNewProject?: () => void;
+    onRefresh?: () => void;
+    actionBtnVisible?: boolean;
     notifications: NotificationResponse[];
     unreadCount: number;
     markAsRead: (notificationId: number) => Promise<void>;
     deleteNotification: (notificationId: number) => Promise<void>;
 }
 
-const { Text } = Typography;
+const {Text} = Typography;
 
 export const HeaderActions = ({
                                   onNewProject,
                                   onRefresh,
+                                  actionBtnVisible = true,
                                   notifications,
                                   unreadCount,
                                   markAsRead,
@@ -79,12 +81,12 @@ export const HeaderActions = ({
                         }
                         description={
                             <div>
-                                <Text type="secondary" style={{ fontSize: '12px' }}>
+                                <Text type="secondary" style={{fontSize: '12px'}}>
                                     {new Date(item.createdAt).toLocaleString('ru-RU')}
                                 </Text>
                                 {item.projectName && (
                                     <div>
-                                        <Text type="secondary" style={{ fontSize: '12px' }}>
+                                        <Text type="secondary" style={{fontSize: '12px'}}>
                                             Проект: {item.projectName}
                                         </Text>
                                     </div>
@@ -97,7 +99,7 @@ export const HeaderActions = ({
             locale={{
                 emptyText: 'Нет уведомлений'
             }}
-            style={{ maxHeight: 400, overflow: 'auto' }}
+            style={{maxHeight: 400, overflow: 'auto'}}
         />
     );
 
@@ -105,13 +107,13 @@ export const HeaderActions = ({
         {
             key: "new",
             label: "Новый проект",
-            icon: <PlusOutlined />,
+            icon: <PlusOutlined/>,
             onClick: onNewProject,
         },
         {
             key: "refresh",
             label: "Обновить",
-            icon: <ReloadOutlined />,
+            icon: <ReloadOutlined/>,
             onClick: onRefresh,
         },
     ];
@@ -123,11 +125,11 @@ export const HeaderActions = ({
 
     return (
         <div style={{display: 'flex', alignItems: "center", justifyContent: "flex-end", gap: 8}}>
-            <Dropdown menu={{ items }} placement="bottomRight">
-                <Button type="text" style={{ color: "white" }}>
-                    Действия <DownOutlined />
+            {actionBtnVisible ? <Dropdown menu={{items}} placement="bottomRight">
+                <Button type="text" style={{color: "white"}}>
+                    Действия <DownOutlined/>
                 </Button>
-            </Dropdown>
+            </Dropdown> : <></>}
 
             <Popover
                 content={notificationContent}
@@ -136,17 +138,17 @@ export const HeaderActions = ({
                 onOpenChange={handleVisibleChange}
                 placement="bottomRight"
                 trigger="click"
-                overlayStyle={{ width: 400 }}
+                overlayStyle={{width: 400}}
             >
-                <Badge count={unreadCount} offset={[10, -5]} style={{ backgroundColor: '#208100' }}>
-                    <Button type="text" icon={<BellOutlined style={{ color: "white", fontSize: 18 }} />} />
+                <Badge count={unreadCount} offset={[10, -5]} style={{backgroundColor: '#208100'}}>
+                    <Button type="text" icon={<BellOutlined style={{color: "white", fontSize: 18}}/>}/>
                 </Badge>
             </Popover>
 
             <Button
                 type="text"
-                icon={<LogoutOutlined />}
-                style={{ color: "white" }}
+                icon={<LogoutOutlined/>}
+                style={{color: "white"}}
                 onClick={onLogout}
             >
                 Выход

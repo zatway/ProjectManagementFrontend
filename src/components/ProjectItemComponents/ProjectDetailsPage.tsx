@@ -114,8 +114,7 @@ const ProjectDetailsPage: FC<ProjectDetailsPageProps> = ({openedTab}) => {
                 <ProjectHeader />
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                     <HeaderActions
-                        onNewProject={() => {}}
-                        onRefresh={() => {}}
+                        actionBtnVisible={false}
                         notifications={notifications}
                         unreadCount={unreadCount}
                         markAsRead={markAsRead}
