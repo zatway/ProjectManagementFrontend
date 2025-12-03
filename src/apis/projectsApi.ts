@@ -19,6 +19,7 @@ export const projectApi = {
      */
     endPoints: {
         all: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS_ALL,
+        detail: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS_DETAIL,
         create: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS_CREATE,
         update: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS_UPDATE,
         delete: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS_DELETE,
@@ -34,7 +35,7 @@ export const projectApi = {
             errorContext: 'Ошибка получения проекта',
             errorText: `Не удалось получить детали проекта`,
         };
-        return await get<ProjectResponse>(`/${id}`, options);
+        return await get<ProjectResponse>(`/${id}${projectApi.endPoints.detail}`, options);
     },
 
     /**
@@ -73,8 +74,7 @@ export const projectApi = {
             errorContext: 'Ошибка обновления проекта',
             errorText: `Не удалось обновить проект`,
         };
-        const endpoint = `${projectApi.endPoints.update}/${id}`;
-        const response = await patch<UpdateProjectRequest, unknown>(endpoint, updateData, options );
+        const response = await patch<UpdateProjectRequest, unknown>(`/${id}${projectApi.endPoints.update}`, updateData, options );
         if (!response.error) {
             return { data: { successfully: true } };
         }
@@ -91,8 +91,7 @@ export const projectApi = {
             errorContext: 'Ошибка удаления проекта',
             errorText: `Не удалось удалить проект`,
         };
-        const endpoint = `${projectApi.endPoints.delete}/${id}`;
-        const response = await remove<unknown>(endpoint, options);
+        const response = await remove<unknown>(`/${id}${projectApi.endPoints.delete}`, options);
         if (!response.error) {
             return { data: { successfully: true } };
         }

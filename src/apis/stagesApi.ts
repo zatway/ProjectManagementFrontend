@@ -7,7 +7,7 @@ import type {UpdateStageRequest} from "../models/DTOModels/Request/UpdateStageRe
 import type {StageResponse} from "../models/DTOModels/Response/StageResponse.ts";
 import type {ShortStageResponse} from "../models/DTOModels/Response/ShortStageResponse.ts";
 
-const {get, post, patch, remove} = createApiService(env.REACT_APP_SERVICE_SERVICE_HOST);
+const {get, post, patch, remove} = createApiService(`${env.REACT_APP_SERVICE_SERVICE_HOST}${env.REACT_APP_SERVICE_SERVICE_ENDPOINT_STAGES}`);
 
 /**
  * API-сервис для работы с этапами проектов.
@@ -18,8 +18,8 @@ export const stagesApi = {
      * Эндпоинты для API-запросов этапов.
      */
     endPoints: {
-        projects: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS_STAGES,
-        stages: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_STAGES,
+        getAll: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_STAGES_GET_ALL,
+        detail: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_STAGES_DETAIL,
     },
 
     /**
@@ -33,8 +33,7 @@ export const stagesApi = {
             errorContext: 'Ошибка создания этапа',
             errorText: `Не удалось создать этап`,
         };
-        const endpoint = `${stagesApi.endPoints.projects}/${projectId}/stages`;
-        return await post<CreateStageRequest, number>(endpoint, createData, options);
+        return await post<CreateStageRequest, number>(`/${projectId}`, createData, options);
     },
 
     /**
@@ -47,8 +46,7 @@ export const stagesApi = {
             errorContext: 'Ошибка получения этапов',
             errorText: `Не удалось загрузить этапы проекта`,
         };
-        const endpoint = `${stagesApi.endPoints.projects}/${projectId}/stages`;
-        return await get<ShortStageResponse[]>(endpoint, options);
+        return await get<ShortStageResponse[]>(`/${projectId}${stagesApi.endPoints.getAll}`, options);
     },
 
     /**
@@ -61,8 +59,7 @@ export const stagesApi = {
             errorContext: 'Ошибка получения этапа',
             errorText: `Не удалось получить детали этапа`,
         };
-        const endpoint = `${stagesApi.endPoints.stages}/${stageId}`;
-        return await get<StageResponse>(endpoint, options);
+        return await get<StageResponse>(`/${stageId}${stagesApi.endPoints.detail}`, options);
     },
 
     /**
@@ -76,8 +73,7 @@ export const stagesApi = {
             errorContext: 'Ошибка обновления этапа',
             errorText: `Не удалось обновить этап`,
         };
-        const endpoint = `${stagesApi.endPoints.stages}/${stageId}`;
-        const response = await patch<UpdateStageRequest, unknown>(endpoint, updateData, options);
+        const response = await patch<UpdateStageRequest, unknown>(`/${stageId}`, updateData, options);
         if (!response.error) {
             return {data: {successfully: true}};
         }
@@ -94,8 +90,7 @@ export const stagesApi = {
             errorContext: 'Ошибка удаления этапа',
             errorText: `Не удалось удалить этап`,
         };
-        const endpoint = `${stagesApi.endPoints.stages}/${stageId}`;
-        const response = await remove<unknown>(endpoint, options);
+        const response = await remove<unknown>(`/${stageId}`, options);
         if (!response.error) {
             return {data: {successfully: true}};
         }

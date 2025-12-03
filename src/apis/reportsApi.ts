@@ -5,7 +5,7 @@ import type {GenerateReportRequest} from "../models/DTOModels/Request/GenerateRe
 import type {ReportResponse} from "../models/DTOModels/Response/ReportResponse.ts";
 import type {ShortReportResponse} from "../models/DTOModels/Response/ShortReportResponse.ts";
 
-const { get, post } = createApiService(env.REACT_APP_SERVICE_SERVICE_HOST);
+const { get, post } = createApiService(`${env.REACT_APP_SERVICE_SERVICE_HOST}${env.REACT_APP_SERVICE_SERVICE_ENDPOINT_REPORTS}`);
 
 /**
  * API-сервис для работы с отчетами.
@@ -16,10 +16,9 @@ export const reportsApi = {
      * Эндпоинты для API-запросов отчетов.
      */
     endPoints: {
-        base: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_REPORTS,
         generate: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_REPORTS_GENERATE,
         download: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_REPORTS_DOWNLOAD,
-        projectReports: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_PROJECTS_STAGES,
+        projectReports: env.REACT_APP_SERVICE_SERVICE_ENDPOINT_REPORTS_PROJECTS,
     },
 
     /**
@@ -32,8 +31,7 @@ export const reportsApi = {
             errorContext: 'Ошибка генерации отчета',
             errorText: `Не удалось запустить генерацию отчета`,
         };
-        const endpoint = `${reportsApi.endPoints.base}${reportsApi.endPoints.generate}`;
-        return await post<GenerateReportRequest, ReportResponse>(endpoint,generateData, options);
+        return await post<GenerateReportRequest, ReportResponse>(reportsApi.endPoints.generate,generateData, options);
     },
 
     /**
@@ -47,8 +45,7 @@ export const reportsApi = {
             errorText: `Не удалось скачать отчет`,
             responseType: 'blob',
         };
-        const endpoint = `${reportsApi.endPoints.base}/${reportId}${reportsApi.endPoints.download}`;
-        return await get<Blob>(endpoint, options);
+        return await get<Blob>(`/${reportId}${reportsApi.endPoints.download}`, options);
     },
 
     /**
@@ -61,7 +58,7 @@ export const reportsApi = {
             errorContext: 'Ошибка получения отчетов',
             errorText: `Не удалось загрузить отчеты проекта`,
         };
-        const endpoint = `${reportsApi.endPoints.projectReports}/${projectId}/reports`;
+        const endpoint = `/${projectId}${reportsApi.endPoints.projectReports}`;
         return await get<ShortReportResponse[]>(endpoint, options);
     },
 };
