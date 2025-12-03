@@ -16,7 +16,8 @@ interface GenerateReportModalProps {
 
 /**
  * Модальное окно запуска генерации отчёта.
- * Собирает параметры отчёта и этапа и отправляет запрос `reportsApi.generateReport`, не обрабатывая даты на клиенте.
+ * Собирает параметры отчёта и этапов (можно выбрать несколько) и отправляет запрос `reportsApi.generateReport`.
+ * Если этапы не выбраны, в отчёт включаются все этапы проекта.
  */
 const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, onClose, onGenerated }) => {
     const [form] = Form.useForm();
@@ -35,10 +36,18 @@ const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, on
             const values = await form.validateFields();
             const req: GenerateReportRequest = {
                 projectId,
-                stageId: values.stageId || undefined,
                 reportType: values.reportType,
                 targetFileName: values.targetFileName,
             };
+
+            if (values.stageIds && Array.isArray(values.stageIds) && values.stageIds.length > 0) {
+                if (values.stageIds.length === 1) {
+                    req.stageId = values.stageIds[0];
+                } else {
+                    req.stageIds = values.stageIds;
+                }
+            }
+
             const res = await reportsApi.generateReport(req);
             if (!res.error) {
                 message.success('Генерация отчёта запущена');
@@ -64,9 +73,10 @@ const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, on
                     <Select placeholder="Выберите тип отчёта" options={reportTypeOptions} />
                 </Form.Item>
 
-                <Form.Item label="Этап (опционно)" name="stageId">
+                <Form.Item label="Этапы (опционно)" name="stageIds">
                     <Select
-                        placeholder="Выберите этап"
+                        mode="multiple"
+                        placeholder="Выберите этапы (если не выбрано, включаются все этапы проекта)"
                         allowClear
                         options={stages.map(s => ({ value: s.stageId, label: s.name }))}
                     />

@@ -57,7 +57,7 @@ const ReportsTable = ({projectId, refetchTrigger}: ReportsTableProps) => {
 
     const columns = [
         {title: 'ID', dataIndex: 'reportId'},
-        {title: 'Название', dataIndex: 'projectName'},
+        {title: 'Название', dataIndex: 'targetFileName'},
         {
             title: 'Тип',
             dataIndex: 'reportType',
@@ -96,4 +96,5 @@ const ReportsTable = ({projectId, refetchTrigger}: ReportsTableProps) => {
 };
 
 export default ReportsTable;
+
 
