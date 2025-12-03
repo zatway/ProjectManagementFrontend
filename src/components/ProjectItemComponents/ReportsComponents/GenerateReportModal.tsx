@@ -14,6 +14,10 @@ interface GenerateReportModalProps {
     onGenerated: () => void;
 }
 
+/**
+ * Модальное окно запуска генерации отчёта.
+ * Собирает параметры отчёта и этапа и отправляет запрос `reportsApi.generateReport`, не обрабатывая даты на клиенте.
+ */
 const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, onClose, onGenerated }) => {
     const [form] = Form.useForm();
     const [stages, setStages] = useState<ShortStageResponse[]>([]);
@@ -34,10 +38,6 @@ const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, on
                 stageId: values.stageId || undefined,
                 reportType: values.reportType,
                 targetFileName: values.targetFileName,
-                // reportConfig: JSON.stringify({
-                //     IncludeProgress: values.includeProgress ?? true,
-                //     IncludeDeadline: values.includeDeadline ?? true
-                // })
             };
             const res = await reportsApi.generateReport(req);
             if (!res.error) {
@@ -75,14 +75,6 @@ const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, on
                 <Form.Item label="Имя файла (опционно)" name="targetFileName">
                     <Input placeholder="Введите имя файла" />
                 </Form.Item>
-
-                {/*<Form.Item name="includeProgress" valuePropName="checked">*/}
-                {/*    <Checkbox>Включать прогресс</Checkbox>*/}
-                {/*</Form.Item>*/}
-
-                {/*<Form.Item name="includeDeadline" valuePropName="checked">*/}
-                {/*    <Checkbox>Включать сроки</Checkbox>*/}
-                {/*</Form.Item>*/}
             </Form>
         </Modal>
     );

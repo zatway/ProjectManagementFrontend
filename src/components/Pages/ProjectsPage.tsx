@@ -16,6 +16,10 @@ import {signalRService} from "../../signalR/SignalRService.ts";
 const {Header, Sider, Content} = Layout;
 const {Title} = Typography;
 
+/**
+ * Страница со списком проектов.
+ * Загружает проекты и уведомления, поддерживает фильтры, сигналы SignalR и операции над проектами (создание/удаление).
+ */
 const ProjectsPage = () => {
     const originalProjectsList = useRef<ShortProjectResponse[]>([]);
     const [filteredData, setFilteredData] = useState(originalProjectsList.current);
@@ -86,7 +90,6 @@ const ProjectsPage = () => {
         setNotifications(prev => {
             const exists = prev.some(n => n.notificationId === newNotif.notificationId);
             if (exists) return prev;
-            // Add to front to maintain descending order by createdAt
             return [newNotif, ...prev];
         });
     };

@@ -32,8 +32,3 @@ export const env: Env = {
     REACT_APP_SERVICE_SERVICE_ENDPOINT_USERS_ALL: '/all',
 };
 
-// (function () {
-//     const ev1 = import.meta.env.MODE === 'development' ? env.REACT_APP_SERVICE_SERVICE_HOST : eval('"PROD_ENV_VITE_SERVICES_HOST"');
-//
-//     env.REACT_APP_SERVICE_SERVICE_HOST = ev1 === '' ? `${window.location.protocol}//${window.location.hostname}:8031` : ev1;
-// })();

@@ -13,6 +13,10 @@ interface StagesTableProps {
     projectId: number;
 }
 
+/**
+ * Таблица этапов проекта.
+ * Загружает этапы и пользователей, позволяет редактировать, создавать и удалять этапы выбранного проекта.
+ */
 const StagesTable = ({projectId}: StagesTableProps) => {
     const [stages, setStages] = useState<ShortStageResponse[]>([]);
     const [isStageModalOpen, setStageModalOpen] = useState(false);

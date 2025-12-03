@@ -20,6 +20,10 @@ export type EditFormValues = {
     endDate: Dayjs | null;
 };
 
+/**
+ * Блок с основной информацией о проекте.
+ * Показывает детали проекта и открывает модальное окно редактирования с конвертацией строковых дат в `Dayjs`.
+ */
 const ProjectInfo = ({ initProject }: ProjectInfoProps) => {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [project, setProject] = useState<ProjectResponse>(initProject);

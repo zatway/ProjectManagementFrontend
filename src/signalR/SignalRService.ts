@@ -8,9 +8,13 @@ export class SignalRService {
     private readonly hubUrl: string;
     private handlers: Map<string, ((...args: any[]) => void)[]> = new Map();
 
+    /**
+     * Сервис для управления SignalR‑подключением.
+     * Создаёт и поддерживает соединение с хабом, проксирует события подписчикам и логирует состояние соединения.
+     */
     constructor() {
         this.hubUrl = `${env.REACT_APP_SERVICE_SERVICE_HOST}${env.REACT_APP_SERVICE_SERVICE_SIGNALR_HUB}`;
-        console.log('[SignalR] Hub URL:', this.hubUrl); // Лог URL
+        console.log('[SignalR] Hub URL:', this.hubUrl);
     }
 
     public async connect(): Promise<void> {
@@ -24,7 +28,7 @@ export class SignalRService {
             console.error('[SignalR] No access token found in localStorage. Login required.');
             return;
         }
-        console.log('[SignalR] Using token:', token ? 'Present' : 'Missing'); // Не логируем сам токен!
+        console.log('[SignalR] Using token:', token ? 'Present' : 'Missing');
 
         if (this.connection) {
             await this.disconnect();
@@ -34,7 +38,7 @@ export class SignalRService {
             .withUrl(this.hubUrl, {
                 accessTokenFactory: () => token,
             })
-            .configureLogging(LogLevel.Debug) // Включи Debug для детальных логов SignalR
+            .configureLogging(LogLevel.Debug)
             .withAutomaticReconnect([0, 2000, 10000, 30000])
             .build();
 
@@ -97,7 +101,7 @@ export class SignalRService {
         if (!this.connection) return;
 
         this.connection.on('ReceiveNotification', (notification: NotificationResponse) => {
-            console.log('[SignalR] Received notification:', notification); // КЛЮЧЕВОЙ ЛОГ!
+            console.log('[SignalR] Received notification:', notification);
             const handlers = this.handlers.get('ReceiveNotification') || [];
             handlers.forEach(handler => handler(notification));
         });

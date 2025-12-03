@@ -10,6 +10,10 @@ interface ReportsTableProps {
     projectId: number;
 }
 
+/**
+ * Таблица отчётов по проекту.
+ * Загружает отчёты для проекта, позволяет запускать генерацию новых отчётов и скачивать готовые файлы.
+ */
 const ReportsTable = ({projectId}: ReportsTableProps) => {
     const [reports, setReports] = useState<ShortReportResponse[]>([]);
     const [isModalOpen, setModalOpen] = useState(false);
@@ -43,10 +47,15 @@ const ReportsTable = ({projectId}: ReportsTableProps) => {
         {title: 'ID', dataIndex: 'reportId'},
         {title: 'Название', dataIndex: 'name'},
         {
-            title: 'Тип', dataIndex: 'reportType', render: (_: any, record: ShortReportResponse) =>
-                getReportType(record.reportType)
+            title: 'Тип',
+            dataIndex: 'reportType',
+            render: (_: any, record: ShortReportResponse) => getReportType(record.reportType)
         },
-        {title: 'Создан', dataIndex: 'createdDate', render: (d: string) => dayjs(d).format('DD.MM.YYYY HH:mm')},
+        {
+            title: 'Создан',
+            dataIndex: 'generatedAt',
+            render: (d: string) => dayjs(d).format('DD.MM.YYYY HH:mm')
+        },
         {
             title: 'Действия', key: 'actions', render: (_: any, record: ShortReportResponse) => (
                 <Space>

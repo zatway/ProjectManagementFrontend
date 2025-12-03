@@ -14,23 +14,27 @@ interface EditProjectModalProps {
     onUpdated: () => void;
 }
 
+/**
+ * Модальное окно редактирования проекта.
+ * Собирает значения формы, конвертирует даты в ISO‑строки и отправляет частичное обновление в `projectApi.updateProject`.
+ */
 const EditProjectModal: FC<EditProjectModalProps> = ({projectId, open, initialValues, onClose, onUpdated}) => {
     const [form] = Form.useForm();
 
-    const buildUpdatePayload = (values: UpdateProjectRequest): UpdateProjectRequest => {
+    const buildUpdatePayload = (values: EditFormValues): UpdateProjectRequest => {
         const payload: UpdateProjectRequest = {};
         if (values.name !== undefined) payload.name = values.name;
-        if (values.description !== undefined) payload.description = values.description;
+        if (values.description !== undefined) payload.description = values.description!;
         if (values.status !== undefined) payload.status = values.status;
         if (values.budget !== undefined) payload.budget = values.budget;
-        if (values.startDate) payload.startDate = values.startDate;
-        if (values.endDate) payload.endDate = values.endDate;
+        if (values.startDate) payload.startDate = values.startDate.toISOString();
+        if (values.endDate) payload.endDate = values.endDate.toISOString();
         return payload;
     };
 
     const handleSave = async () => {
         try {
-            const values = await form?.validateFields?.();
+            const values = await form.validateFields();
             const req = buildUpdatePayload(values);
             const res = await projectApi.updateProject(projectId, req);
             if (!res.error) {

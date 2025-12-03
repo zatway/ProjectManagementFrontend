@@ -1,5 +1,6 @@
 import { Modal, Form, Input, InputNumber, DatePicker } from "antd";
 import type {FC} from "react";
+import type {Dayjs} from "dayjs";
 import type {CreateProjectRequest} from "../../models/DTOModels/Request/CreateProjectRequest.ts";
 
 interface AddProjectModalProps {
@@ -8,11 +9,30 @@ interface AddProjectModalProps {
     onSave: (p: CreateProjectRequest) => void;
 }
 
+interface AddProjectFormValues {
+    name: string;
+    description: string;
+    budget: number;
+    dates: [Dayjs, Dayjs];
+}
+
+/**
+ * Модальное окно создания проекта.
+ * Принимает значения формы, конвертирует диапазон дат в ISO‑строки и передаёт API-модель `CreateProjectRequest`.
+ */
 export const AddProjectModal: FC<AddProjectModalProps> = ({ open, onCancel, onSave }) => {
     const [form] = Form.useForm();
 
-    const handleFinish = (values: CreateProjectRequest) => {
-        onSave(values);
+    const handleFinish = (values: AddProjectFormValues) => {
+        const [start, end] = values.dates;
+        const payload: CreateProjectRequest = {
+            name: values.name,
+            description: values.description,
+            budget: values.budget,
+            startDate: start.toISOString(),
+            endDate: end.toISOString()
+        };
+        onSave(payload);
         form.resetFields();
     };
 

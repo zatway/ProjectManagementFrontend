@@ -19,6 +19,10 @@ interface ProjectDetailsPageProps {
     openedTab: 'projectDetails' | 'stagesList' | 'reportsList';
 }
 
+/**
+ * Страница деталей проекта.
+ * Загружает один проект и связанные уведомления, отображает вкладки с деталями, этапами и отчётами.
+ */
 const ProjectDetailsPage: FC<ProjectDetailsPageProps> = ({openedTab}) => {
     const {projectId} = useParams<{ projectId: string }>();
 

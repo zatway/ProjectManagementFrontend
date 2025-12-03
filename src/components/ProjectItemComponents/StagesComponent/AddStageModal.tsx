@@ -14,6 +14,10 @@ interface AddStageModalProps {
     onSaved: () => void;
 }
 
+/**
+ * Модальное окно создания этапа.
+ * Собирает значения формы, конвертирует дату‑дедлайн в ISO‑строку и отправляет запрос `stagesApi.createStage`.
+ */
 const AddStageModal: FC<AddStageModalProps> = ({ projectId, open, onClose, onSaved }) => {
     const [form] = Form.useForm();
     const [users, setUsers] = useState<UserResponse[]>([]);

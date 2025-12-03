@@ -16,6 +16,10 @@ interface Props {
 
 const {Text} = Typography;
 
+/**
+ * Панель действий в шапке приложения.
+ * Отображает кнопки действий, выводит список уведомлений и позволяет помечать их прочитанными или удалять.
+ */
 export const HeaderActions = ({
                                   onNewProject,
                                   onRefresh,

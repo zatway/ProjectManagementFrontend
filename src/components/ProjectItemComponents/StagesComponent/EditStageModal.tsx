@@ -15,6 +15,10 @@ interface EditStageModalProps {
     onSaved: () => void;
 }
 
+/**
+ * Модальное окно редактирования этапа.
+ * Подтягивает детали этапа, заполняет форму и отправляет частичное обновление с датой‑дедлайном в формате ISO‑строки.
+ */
 const EditStageModal: FC<EditStageModalProps> = ({ stage, users, open, onClose, onSaved }) => {
     const [form] = Form.useForm();
 
@@ -27,7 +31,7 @@ const EditStageModal: FC<EditStageModalProps> = ({ stage, users, open, onClose, 
                     progressPercent: res.data.progressPercent,
                     status: res.data.status,
                     specialistUserId: specialist ? specialist.id : undefined,
-                    deadline: dayjs(res.data.deadline).format('DD.MM.YYYY HH:mm')
+                    deadline: dayjs(res.data.deadline)
                 });
             }
         };
