@@ -30,6 +30,7 @@ const ProjectDetailsPage: FC<ProjectDetailsPageProps> = ({openedTab}) => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState(openedTab);
     const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
+    const [reportsRefetchTrigger, setReportsRefetchTrigger] = useState(0);
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -63,6 +64,14 @@ const ProjectDetailsPage: FC<ProjectDetailsPageProps> = ({openedTab}) => {
                 placement: 'bottomRight',
                 duration: 4.5,
             });
+
+            const currentProjectId = projectId ? Number(projectId) : null;
+            const isReportNotification = newNotif.message.toLowerCase().includes('отчет') || 
+                                       newNotif.message.toLowerCase().includes('отчета');
+            
+            if (currentProjectId && newNotif.projectId === currentProjectId && isReportNotification) {
+                setReportsRefetchTrigger(prev => prev + 1);
+            }
         };
 
         signalRService.on('ReceiveNotification', handleNotification);
@@ -109,7 +118,7 @@ const ProjectDetailsPage: FC<ProjectDetailsPageProps> = ({openedTab}) => {
     const tabs = [
         { key: "projectDetails", label: "Детали проекта", children: <ProjectInfo initProject={project} /> },
         { key: "stagesList", label: "Этапы", children: <StagesTable projectId={Number(projectId)} /> },
-        { key: "reportsList", label: "Отчёты", children: <ReportsTable projectId={Number(projectId)} /> },
+        { key: "reportsList", label: "Отчёты", children: <ReportsTable projectId={Number(projectId)} refetchTrigger={reportsRefetchTrigger} /> },
     ];
 
     return (

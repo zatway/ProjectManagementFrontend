@@ -1,31 +1,43 @@
-import {Table, Button, Space, message} from 'antd';
-import {useState, useEffect} from 'react';
+import {Table, Button, Space, message, Badge} from 'antd';
+import {useState, useEffect, useCallback} from 'react';
 import {reportsApi} from '../../../apis/reportsApi';
 import type {ShortReportResponse} from '../../../models/DTOModels/Response/ShortReportResponse.ts';
 import dayjs from 'dayjs';
 import GenerateReportModal from "./GenerateReportModal.tsx";
-import {getReportType} from "../../../utils/enumConverter.ts";
+import {
+    getReportStatusConfig,
+    getReportType
+} from "../../../utils/enumConverter.ts";
 
 interface ReportsTableProps {
     projectId: number;
+    refetchTrigger?: number;
 }
 
 /**
  * Таблица отчётов по проекту.
  * Загружает отчёты для проекта, позволяет запускать генерацию новых отчётов и скачивать готовые файлы.
+ * @param projectId - ID проекта для загрузки отчётов
+ * @param refetchTrigger - Триггер для принудительной перезагрузки отчётов (увеличивается при получении уведомлений)
  */
-const ReportsTable = ({projectId}: ReportsTableProps) => {
+const ReportsTable = ({projectId, refetchTrigger}: ReportsTableProps) => {
     const [reports, setReports] = useState<ShortReportResponse[]>([]);
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const fetchReports = async () => {
+    const fetchReports = useCallback(async () => {
         const res = await reportsApi.getReportsByProject(projectId);
         if (!res.error) setReports(res.data || []);
-    };
+    }, [projectId]);
 
     useEffect(() => {
         fetchReports();
-    }, [projectId]);
+    }, [fetchReports]);
+
+    useEffect(() => {
+        if (refetchTrigger !== undefined && refetchTrigger > 0) {
+            fetchReports();
+        }
+    }, [refetchTrigger, fetchReports]);
 
     const downloadReport = async (reportId: number, fileName?: string) => {
         const res = await reportsApi.downloadReport(reportId);
@@ -45,7 +57,7 @@ const ReportsTable = ({projectId}: ReportsTableProps) => {
 
     const columns = [
         {title: 'ID', dataIndex: 'reportId'},
-        {title: 'Название', dataIndex: 'name'},
+        {title: 'Название', dataIndex: 'projectName'},
         {
             title: 'Тип',
             dataIndex: 'reportType',
@@ -55,6 +67,12 @@ const ReportsTable = ({projectId}: ReportsTableProps) => {
             title: 'Создан',
             dataIndex: 'generatedAt',
             render: (d: string) => dayjs(d).format('DD.MM.YYYY HH:mm')
+        },
+        {
+            title: 'Статус',
+            dataIndex: 'status',
+            render: (_: any, report: ShortReportResponse) => <Badge color={getReportStatusConfig(report.status).color}
+                                                                    text={getReportStatusConfig(report.status).text}/>
         },
         {
             title: 'Действия', key: 'actions', render: (_: any, record: ShortReportResponse) => (
@@ -78,3 +96,4 @@ const ReportsTable = ({projectId}: ReportsTableProps) => {
 };
 
 export default ReportsTable;
+
