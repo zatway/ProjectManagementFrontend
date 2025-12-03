@@ -1,17 +1,105 @@
-import { Button, Dropdown } from "antd";
-import { LogoutOutlined, PlusOutlined, ReloadOutlined, DownOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Badge, Popover, List, Popconfirm, Typography } from "antd";
+import { LogoutOutlined, PlusOutlined, ReloadOutlined, DownOutlined, BellOutlined } from "@ant-design/icons";
 import {authLocalService} from "../../storageServices/authLocalService.ts";
+import {useState} from "react";
+import type {NotificationResponse} from "../../models/DTOModels/Response/SignalR/NotificationResponse.ts";
 
 interface Props {
     onNewProject: () => void;
     onRefresh: () => void;
+    notifications: NotificationResponse[];
+    unreadCount: number;
+    markAsRead: (notificationId: number) => Promise<void>;
+    deleteNotification: (notificationId: number) => Promise<void>;
 }
 
-export const HeaderActions = ({ onNewProject, onRefresh }: Props) => {
-    const onLogout = () => {
-        authLocalService.clearIdentityData();
-        window.location.href = '/';
-    }
+const { Text } = Typography;
+
+export const HeaderActions = ({
+                                  onNewProject,
+                                  onRefresh,
+                                  notifications,
+                                  unreadCount,
+                                  markAsRead,
+                                  deleteNotification
+                              }: Props) => {
+    const [visible, setVisible] = useState(false);
+
+    const handleVisibleChange = (newVisible: boolean) => {
+        setVisible(newVisible);
+    };
+
+    const handleMarkAsRead = async (id: number) => {
+        await markAsRead(id);
+        if (notifications.length === 1) setVisible(false);
+    };
+
+    const handleDelete = async (id: number) => {
+        await deleteNotification(id);
+        if (notifications.length === 1) setVisible(false);
+    };
+
+    const notificationContent = (
+        <List
+            size="small"
+            dataSource={notifications}
+            renderItem={(item) => (
+                <List.Item
+                    actions={[
+                        <Button
+                            type="link"
+                            size="small"
+                            onClick={() => handleMarkAsRead(item.notificationId)}
+                            disabled={item.isRead}
+                        >
+                            {item.isRead ? 'Прочитано' : 'Прочитать'}
+                        </Button>,
+                        <Popconfirm
+                            title="Удалить уведомление?"
+                            onConfirm={() => handleDelete(item.notificationId)}
+                            okText="Да"
+                            cancelText="Нет"
+                        >
+                            <Button type="link" size="small" danger>
+                                Удалить
+                            </Button>
+                        </Popconfirm>
+                    ]}
+                >
+                    <List.Item.Meta
+                        title={
+                            <Text
+                                style={{
+                                    fontWeight: item.isRead ? 'normal' : 'bold',
+                                    margin: 0
+                                }}
+                            >
+                                {item.message}
+                            </Text>
+                        }
+                        description={
+                            <div>
+                                <Text type="secondary" style={{ fontSize: '12px' }}>
+                                    {new Date(item.createdAt).toLocaleString('ru-RU')}
+                                </Text>
+                                {item.projectName && (
+                                    <div>
+                                        <Text type="secondary" style={{ fontSize: '12px' }}>
+                                            Проект: {item.projectName}
+                                        </Text>
+                                    </div>
+                                )}
+                            </div>
+                        }
+                    />
+                </List.Item>
+            )}
+            locale={{
+                emptyText: 'Нет уведомлений'
+            }}
+            style={{ maxHeight: 400, overflow: 'auto' }}
+        />
+    );
 
     const items = [
         {
@@ -28,13 +116,32 @@ export const HeaderActions = ({ onNewProject, onRefresh }: Props) => {
         },
     ];
 
+    const onLogout = () => {
+        authLocalService.clearIdentityData();
+        window.location.href = '/';
+    };
+
     return (
-        <>
+        <div style={{display: 'flex', alignItems: "center", justifyContent: "flex-end", gap: 8}}>
             <Dropdown menu={{ items }} placement="bottomRight">
                 <Button type="text" style={{ color: "white" }}>
                     Действия <DownOutlined />
                 </Button>
             </Dropdown>
+
+            <Popover
+                content={notificationContent}
+                title="Уведомления"
+                popupVisible={visible}
+                onOpenChange={handleVisibleChange}
+                placement="bottomRight"
+                trigger="click"
+                overlayStyle={{ width: 400 }}
+            >
+                <Badge count={unreadCount} offset={[10, -5]} style={{ backgroundColor: '#208100' }}>
+                    <Button type="text" icon={<BellOutlined style={{ color: "white", fontSize: 18 }} />} />
+                </Badge>
+            </Popover>
 
             <Button
                 type="text"
@@ -44,6 +151,6 @@ export const HeaderActions = ({ onNewProject, onRefresh }: Props) => {
             >
                 Выход
             </Button>
-        </>
+        </div>
     );
 };

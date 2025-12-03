@@ -1,14 +1,17 @@
 import {useState, useRef, useEffect} from "react";
-import {Layout, Typography} from "antd";
+import {Layout, Typography, notification} from "antd";
 import {HeaderActions} from "../HeaderActions/HeaderActions.tsx";
 import {FiltersPanel} from "../ProjectsComponents/FiltersPanel.tsx";
 import {ProjectTable} from "../ProjectsComponents/ProjectTable.tsx";
 import {AddProjectModal} from "../ProjectsComponents/AddProjectModal.tsx";
 import {projectApi} from "../../apis/projectsApi.ts";
+import {notificationsApi} from "../../apis/notificationsApi.ts";
 import {hasValue} from "../../utils/hasValue.ts";
 import type {CreateProjectRequest} from "../../models/DTOModels/Request/CreateProjectRequest.ts";
 import type {IProjectActions} from "../ProjectsComponents/columns.tsx";
 import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortProjectResponse.ts";
+import type {NotificationResponse} from "../../models/DTOModels/Response/SignalR/NotificationResponse.ts";
+import {signalRService} from "../../signalR/SignalRService.ts";
 
 const {Header, Sider, Content} = Layout;
 const {Title} = Typography;
@@ -16,12 +19,33 @@ const {Title} = Typography;
 const ProjectsPage = () => {
     const originalProjectsList = useRef<ShortProjectResponse[]>([]);
     const [filteredData, setFilteredData] = useState(originalProjectsList.current);
-
+    const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
     const [isAddModalOpen, setAddModalOpen] = useState(false);
 
     useEffect(() => {
-        fetchProjects()
-    }, [])
+        fetchProjects();
+        fetchNotifications();
+
+        const handleNotification = (newNotif: NotificationResponse) => {
+            addNotification(newNotif);
+            notification.open({
+                title: newNotif.projectName ? `Project: ${newNotif.projectName}` : 'Notification',
+                description: newNotif.message,
+                placement: 'bottomRight',
+                duration: 4.5,
+            });
+        };
+
+        signalRService.on('ReceiveNotification', handleNotification);
+
+        if (signalRService.getConnectionState() !== 'Connected') {
+            signalRService.connect().catch(console.error);
+        }
+
+        return () => {
+            signalRService.off('ReceiveNotification', handleNotification);
+        };
+    }, []);
 
     const fetchProjects = async () => {
         const res = await projectApi.getAllProjects();
@@ -32,13 +56,44 @@ const ProjectsPage = () => {
             originalProjectsList.current = [];
             setFilteredData([]);
         }
-    }
+    };
+
+    const fetchNotifications = async () => {
+        const res = await notificationsApi.getNotifications();
+        if (hasValue(res.data)) {
+            const sorted = res.data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            setNotifications(sorted);
+        } else {
+            setNotifications([]);
+        }
+    };
 
     const createNewProject = async (newProject: CreateProjectRequest) => {
         const res = await projectApi.createProject(newProject);
         if (hasValue(res.data)) await fetchProjects();
         setAddModalOpen(false);
-    }
+    };
+
+    const markAsRead = async (notificationId: number) => {
+        await notificationsApi.markAsRead(notificationId);
+        setNotifications(prev => prev.map(n =>
+            n.notificationId === notificationId ? { ...n, isRead: true } : n
+        ));
+    };
+
+    const deleteNotification = async (notificationId: number) => {
+        await notificationsApi.deleteNotification(notificationId);
+        setNotifications(prev => prev.filter(n => n.notificationId !== notificationId));
+    };
+
+    const addNotification = (newNotif: NotificationResponse) => {
+        setNotifications(prev => {
+            const exists = prev.some(n => n.notificationId === newNotif.notificationId);
+            if (exists) return prev;
+            // Add to front to maintain descending order by createdAt
+            return [newNotif, ...prev];
+        });
+    };
 
     const actionsItem: IProjectActions = {
         openReportsList: async (record) => {
@@ -51,7 +106,9 @@ const ProjectsPage = () => {
             const res = await projectApi.deleteProject(record.projectId);
             if (hasValue(res.data)) await fetchProjects();
         },
-    }
+    };
+
+    const unreadCount = notifications.filter(n => !n.isRead).length;
 
     return (
         <Layout style={{minHeight: "100vh"}}>
@@ -64,22 +121,23 @@ const ProjectsPage = () => {
                     backgroundColor: "#208100"
                 }}
             >
-                <div style={{display: "flex", alignItems: "center", justifyContent: 'flex-end'}}>
-                    <Title level={3} style={{color: "white", margin: 0, marginRight: 24}}>
-                        Панель проектов
-                    </Title>
+                <Title level={3} style={{color: "white", margin: 0, marginRight: 24}}>
+                    Панель проектов
+                </Title>
+                <HeaderActions
+                    onNewProject={() => setAddModalOpen(true)}
+                    onRefresh={() => fetchProjects()}
+                    notifications={notifications}
+                    unreadCount={unreadCount}
+                    markAsRead={markAsRead}
+                    deleteNotification={deleteNotification}
+                />
 
-                    <HeaderActions
-                        onNewProject={() => setAddModalOpen(true)}
-                        onRefresh={() => fetchProjects()}
-                    />
-
-                    <AddProjectModal
-                        open={isAddModalOpen}
-                        onCancel={() => setAddModalOpen(false)}
-                        onSave={createNewProject}
-                    />
-                </div>
+                <AddProjectModal
+                    open={isAddModalOpen}
+                    onCancel={() => setAddModalOpen(false)}
+                    onSave={createNewProject}
+                />
             </Header>
 
             <Layout>

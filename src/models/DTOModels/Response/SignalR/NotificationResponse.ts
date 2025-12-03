@@ -4,6 +4,6 @@ export interface NotificationResponse {
     projectId?: number;
     message: string;
     isRead: boolean;
-    createdAt: Date | string;
+    createdAt: string;//дата
     projectName?: string;
 }

@@ -4,7 +4,7 @@ import type {SimpleCommandResult} from "../models/DTOModels/Response/SimpleComma
 import {createApiService} from "../apiService/createApiService.ts";
 import type {NotificationResponse} from "../models/DTOModels/Response/SignalR/NotificationResponse.ts";
 
-const { get, remove, patch } = createApiService(`${env.REACT_APP_SERVICE_SERVICE_HOST} ${env.REACT_APP_SERVICE_SERVICE_ENDPOINT_NOTIFICATION}`);
+const { get, remove, patch } = createApiService(`${env.REACT_APP_SERVICE_SERVICE_HOST}${env.REACT_APP_SERVICE_SERVICE_ENDPOINT_NOTIFICATION}`);
 
 /**
  * API-сервис для работы с уведомлениями.
