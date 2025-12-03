@@ -4,17 +4,18 @@ import type {UpdateProjectRequest} from "../../models/DTOModels/Request/UpdatePr
 import {projectApi} from "../../apis/projectsApi.ts";
 import {getProjectStatusLabel} from "../../utils/enumConverter.ts";
 import {ProjectStatus} from "../../models/DTOModels/Еnums/ProjectStatus.ts";
+import type {EditFormValues} from "./ProjectInfo.tsx";
 
 interface EditProjectModalProps {
     projectId: number;
     open: boolean;
-    initialValues: UpdateProjectRequest;
+    initialValues: EditFormValues;
     onClose: () => void;
     onUpdated: () => void;
 }
 
 const EditProjectModal: FC<EditProjectModalProps> = ({projectId, open, initialValues, onClose, onUpdated}) => {
-    const [form] = Form.useForm<UpdateProjectRequest>();
+    const [form] = Form.useForm();
 
     const buildUpdatePayload = (values: UpdateProjectRequest): UpdateProjectRequest => {
         const payload: UpdateProjectRequest = {};

@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { Descriptions, Badge, Button } from 'antd';
-import dayjs from 'dayjs';
+import dayjs, {type Dayjs} from 'dayjs';
 import { getProjectStatusColor, getProjectStatusLabel } from '../../utils/enumConverter.ts';
 import type { ProjectResponse } from '../../models/DTOModels/Response/ProjectResponse.ts';
 import EditProjectModal from './EditProjectModal';
-import type {UpdateProjectRequest} from "../../models/DTOModels/Request/UpdateProjectRequest.ts";
 import {projectApi} from "../../apis/projectsApi.ts";
 import {hasValue} from "../../utils/hasValue.ts";
 
@@ -12,16 +11,25 @@ interface ProjectInfoProps {
     initProject: ProjectResponse;
 }
 
+export type EditFormValues = {
+    name: string;
+    description?: string | null;
+    budget: number;
+    status: string;
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
+};
+
 const ProjectInfo = ({ initProject }: ProjectInfoProps) => {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [project, setProject] = useState<ProjectResponse>(initProject);
 
-    const initialValues: UpdateProjectRequest = {
+    const initialValues: EditFormValues = {
         name: project.name,
         description: project.description,
         budget: project.budget,
-        startDate: project.startDate,
-        endDate: project.endDate,
+        startDate: project.startDate ? dayjs(project.startDate) : null,
+        endDate: project.endDate ? dayjs(project.endDate) : null,
         status: project.status
     };
 
