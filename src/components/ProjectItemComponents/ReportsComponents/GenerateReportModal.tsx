@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Select, message } from 'antd';
+import { Modal, Form, Input, Select, message, Spin } from 'antd';
 import { reportsApi } from '../../../apis/reportsApi';
 import { stagesApi } from '../../../apis/stagesApi';
 import {useEffect, useState, type FC } from 'react';
@@ -22,17 +22,25 @@ interface GenerateReportModalProps {
 const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, onClose, onGenerated }) => {
     const [form] = Form.useForm();
     const [stages, setStages] = useState<ShortStageResponse[]>([]);
+    const [isStagesLoading, setIsStagesLoading] = useState(false);
+    const [isGenerateLoading, setIsGenerateLoading] = useState(false);
 
     useEffect(() => {
         const fetchStages = async () => {
-            const res = await stagesApi.getAllStages(projectId);
-            if (!res.error) setStages(res.data || []);
+            setIsStagesLoading(true);
+            try {
+                const res = await stagesApi.getAllStages(projectId);
+                if (!res.error) setStages(res.data || []);
+            } finally {
+                setIsStagesLoading(false);
+            }
         };
         if (open) fetchStages();
     }, [projectId, open]);
 
     const handleGenerate = async () => {
         try {
+            setIsGenerateLoading(true);
             const values = await form.validateFields();
             const req: GenerateReportRequest = {
                 projectId,
@@ -55,8 +63,10 @@ const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, on
             } else {
                 message.error('Не удалось запустить генерацию отчёта');
             }
-        } catch (e) {}
-        finally {
+        } catch (e) {
+            // ошибки уже будут показаны через валидацию / message
+        } finally {
+            setIsGenerateLoading(false);
             onClose();
         }
     };
@@ -67,7 +77,15 @@ const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, on
     }));
 
     return (
-        <Modal title="Сгенерировать отчёт" open={open} onCancel={onClose} onOk={handleGenerate} okText="Запустить">
+        <Modal
+            title="Сгенерировать отчёт"
+            open={open}
+            onCancel={onClose}
+            onOk={handleGenerate}
+            okText="Запустить"
+            confirmLoading={isGenerateLoading}
+        >
+            <Spin spinning={isStagesLoading}>
             <Form layout="vertical" form={form}>
                 <Form.Item label="Тип отчёта" name="reportType" rules={[{ required: true }]}>
                     <Select placeholder="Выберите тип отчёта" options={reportTypeOptions} />
@@ -86,6 +104,7 @@ const GenerateReportModal: FC<GenerateReportModalProps> = ({ projectId, open, on
                     <Input placeholder="Введите имя файла" />
                 </Form.Item>
             </Form>
+            </Spin>
         </Modal>
     );
 };

@@ -1,5 +1,5 @@
 import {Modal, Form, Input, InputNumber, DatePicker, message, Select} from 'antd';
-import {type FC} from 'react';
+import {type FC, useState} from 'react';
 import type {UpdateProjectRequest} from "../../models/DTOModels/Request/UpdateProjectRequest.ts";
 import {projectApi} from "../../apis/projectsApi.ts";
 import {getProjectStatusLabel} from "../../utils/enumConverter.ts";
@@ -20,6 +20,7 @@ interface EditProjectModalProps {
  */
 const EditProjectModal: FC<EditProjectModalProps> = ({projectId, open, initialValues, onClose, onUpdated}) => {
     const [form] = Form.useForm();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const buildUpdatePayload = (values: EditFormValues): UpdateProjectRequest => {
         const payload: UpdateProjectRequest = {};
@@ -34,6 +35,7 @@ const EditProjectModal: FC<EditProjectModalProps> = ({projectId, open, initialVa
 
     const handleSave = async () => {
         try {
+            setIsSubmitting(true);
             const values = await form.validateFields();
             const req = buildUpdatePayload(values);
             const res = await projectApi.updateProject(projectId, req);
@@ -45,6 +47,7 @@ const EditProjectModal: FC<EditProjectModalProps> = ({projectId, open, initialVa
             }
         } catch (e) {
         } finally {
+            setIsSubmitting(false);
             onClose();
         }
     };
@@ -55,7 +58,7 @@ const EditProjectModal: FC<EditProjectModalProps> = ({projectId, open, initialVa
     }));
 
     return (
-        <Modal title="Редактировать проект" open={open} onCancel={onClose} onOk={handleSave} okText="Сохранить">
+        <Modal title="Редактировать проект" open={open} onCancel={onClose} onOk={handleSave} okText="Сохранить" confirmLoading={isSubmitting}>
             <Form layout="vertical" form={form} initialValues={initialValues}>
                 <Form.Item label="Название" name="name" rules={[{required: true}]}><Input/></Form.Item>
                 <Form.Item label="Описание" name="description"><Input.TextArea rows={4}/></Form.Item>

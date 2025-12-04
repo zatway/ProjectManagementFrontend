@@ -23,10 +23,16 @@ interface ReportsTableProps {
 const ReportsTable = ({projectId, refetchTrigger}: ReportsTableProps) => {
     const [reports, setReports] = useState<ShortReportResponse[]>([]);
     const [isModalOpen, setModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchReports = useCallback(async () => {
-        const res = await reportsApi.getReportsByProject(projectId);
-        if (!res.error) setReports(res.data || []);
+        setIsLoading(true);
+        try {
+            const res = await reportsApi.getReportsByProject(projectId);
+            if (!res.error) setReports(res.data || []);
+        } finally {
+            setIsLoading(false);
+        }
     }, [projectId]);
 
     useEffect(() => {
@@ -86,9 +92,10 @@ const ReportsTable = ({projectId, refetchTrigger}: ReportsTableProps) => {
 
     return (
         <>
-            <Button type="primary" style={{marginBottom: 12}} onClick={() => setModalOpen(true)}>Сгенерировать
-                отчет</Button>
-            <Table dataSource={reports} rowKey="reportId" columns={columns} bordered/>
+            <Button type="primary" style={{marginBottom: 12}} onClick={() => setModalOpen(true)}>
+                Сгенерировать отчет
+            </Button>
+            <Table dataSource={reports} rowKey="reportId" columns={columns} bordered loading={isLoading}/>
             <GenerateReportModal projectId={projectId} open={isModalOpen} onClose={() => setModalOpen(false)}
                                  onGenerated={fetchReports}/>
         </>

@@ -25,6 +25,7 @@ const ProjectsPage = () => {
     const [filteredData, setFilteredData] = useState(originalProjectsList.current);
     const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
     const [isAddModalOpen, setAddModalOpen] = useState(false);
+    const [isProjectsLoading, setIsProjectsLoading] = useState(false);
 
     useEffect(() => {
         fetchProjects();
@@ -48,13 +49,18 @@ const ProjectsPage = () => {
     }, []);
 
     const fetchProjects = async () => {
-        const res = await projectApi.getAllProjects();
-        if (hasValue(res.data)) {
-            originalProjectsList.current = res.data;
-            setFilteredData(res.data);
-        } else {
-            originalProjectsList.current = [];
-            setFilteredData([]);
+        setIsProjectsLoading(true);
+        try {
+            const res = await projectApi.getAllProjects();
+            if (hasValue(res.data)) {
+                originalProjectsList.current = res.data;
+                setFilteredData(res.data);
+            } else {
+                originalProjectsList.current = [];
+                setFilteredData([]);
+            }
+        } finally {
+            setIsProjectsLoading(false);
         }
     };
 
@@ -163,7 +169,7 @@ const ProjectsPage = () => {
                         padding: "16px"
                     }}
                 >
-                    <ProjectTable data={filteredData} actions={actionsItem}/>
+                    <ProjectTable data={filteredData} actions={actionsItem} loading={isProjectsLoading}/>
                 </Content>
             </Layout>
         </Layout>

@@ -1,5 +1,5 @@
 import { Modal, Form, Input, InputNumber, DatePicker } from "antd";
-import type {FC} from "react";
+import {useState, type FC} from "react";
 import type {Dayjs} from "dayjs";
 import type {CreateProjectRequest} from "../../models/DTOModels/Request/CreateProjectRequest.ts";
 
@@ -22,18 +22,24 @@ interface AddProjectFormValues {
  */
 export const AddProjectModal: FC<AddProjectModalProps> = ({ open, onCancel, onSave }) => {
     const [form] = Form.useForm();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleFinish = (values: AddProjectFormValues) => {
-        const [start, end] = values.dates;
-        const payload: CreateProjectRequest = {
-            name: values.name,
-            description: values.description,
-            budget: values.budget,
-            startDate: start.toISOString(),
-            endDate: end.toISOString()
-        };
-        onSave(payload);
-        form.resetFields();
+    const handleFinish = async (values: AddProjectFormValues) => {
+        setIsSubmitting(true);
+        try {
+            const [start, end] = values.dates;
+            const payload: CreateProjectRequest = {
+                name: values.name,
+                description: values.description,
+                budget: values.budget,
+                startDate: start.toISOString(),
+                endDate: end.toISOString()
+            };
+            await onSave(payload);
+            form.resetFields();
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -45,6 +51,7 @@ export const AddProjectModal: FC<AddProjectModalProps> = ({ open, onCancel, onSa
                 onCancel();
             }}
             onOk={() => form.submit()}
+            confirmLoading={isSubmitting}
             okText="Создать"
             cancelText="Отмена"
             style={{ top: 50 }}

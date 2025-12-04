@@ -30,19 +30,24 @@ export const HeaderActions = ({
                                   deleteNotification
                               }: Props) => {
     const [visible, setVisible] = useState(false);
+    const [processingId, setProcessingId] = useState<number | null>(null);
 
     const handleVisibleChange = (newVisible: boolean) => {
         setVisible(newVisible);
     };
 
     const handleMarkAsRead = async (id: number) => {
+        setProcessingId(id);
         await markAsRead(id);
         if (notifications.length === 1) setVisible(false);
+        setProcessingId(null);
     };
 
     const handleDelete = async (id: number) => {
+        setProcessingId(id);
         await deleteNotification(id);
         if (notifications.length === 1) setVisible(false);
+        setProcessingId(null);
     };
 
     const notificationContent = (
@@ -56,7 +61,8 @@ export const HeaderActions = ({
                             type="link"
                             size="small"
                             onClick={() => handleMarkAsRead(item.notificationId)}
-                            disabled={item.isRead}
+                            disabled={item.isRead || processingId === item.notificationId}
+                            loading={processingId === item.notificationId}
                         >
                             {item.isRead ? 'Прочитано' : 'Прочитать'}
                         </Button>,
@@ -66,7 +72,7 @@ export const HeaderActions = ({
                             okText="Да"
                             cancelText="Нет"
                         >
-                            <Button type="link" size="small" danger>
+                            <Button type="link" size="small" danger loading={processingId === item.notificationId}>
                                 Удалить
                             </Button>
                         </Popconfirm>

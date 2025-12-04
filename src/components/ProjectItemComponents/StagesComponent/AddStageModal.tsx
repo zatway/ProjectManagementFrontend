@@ -21,6 +21,7 @@ interface AddStageModalProps {
 const AddStageModal: FC<AddStageModalProps> = ({ projectId, open, onClose, onSaved }) => {
     const [form] = Form.useForm();
     const [users, setUsers] = useState<UserResponse[]>([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -33,6 +34,7 @@ const AddStageModal: FC<AddStageModalProps> = ({ projectId, open, onClose, onSav
 
     const handleSave = async () => {
         try {
+            setIsSubmitting(true);
             const values = await form.validateFields();
             const res = await stagesApi.createStage(projectId, {
                 name: values.name,
@@ -49,7 +51,10 @@ const AddStageModal: FC<AddStageModalProps> = ({ projectId, open, onClose, onSav
                 message.error('Не удалось создать этап');
             }
         } catch (e) {}
-        finally { onClose(); }
+        finally {
+            setIsSubmitting(false);
+            onClose();
+        }
     };
 
     const stageStatusOptions = Object.values(StageStatus).map(sS => ({
@@ -63,7 +68,7 @@ const AddStageModal: FC<AddStageModalProps> = ({ projectId, open, onClose, onSav
     }));
 
     return (
-        <Modal title="Добавить этап" open={open} onCancel={onClose} onOk={handleSave} okText="Создать">
+        <Modal title="Добавить этап" open={open} onCancel={onClose} onOk={handleSave} okText="Создать" confirmLoading={isSubmitting}>
             <Form form={form} layout="vertical">
                 <Form.Item label="Название" name="name" rules={[{ required: true }]}><Input /></Form.Item>
                 <Form.Item label="Тип этапа" name="stageType" rules={[{ required: true }]}>

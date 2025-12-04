@@ -1,5 +1,5 @@
 import { Modal, Form, InputNumber, DatePicker, Select, message } from 'antd';
-import {type FC, useEffect} from 'react';
+import {type FC, useEffect, useState} from 'react';
 import { stagesApi } from '../../../apis/stagesApi';
 import type { ShortStageResponse } from '../../../models/DTOModels/Response/ShortStageResponse.ts';
 import type { UserResponse } from '../../../models/DTOModels/Response/UserResponse.ts';
@@ -21,6 +21,7 @@ interface EditStageModalProps {
  */
 const EditStageModal: FC<EditStageModalProps> = ({ stage, users, open, onClose, onSaved }) => {
     const [form] = Form.useForm();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         const fetchStage = async () => {
@@ -40,6 +41,7 @@ const EditStageModal: FC<EditStageModalProps> = ({ stage, users, open, onClose, 
 
     const handleSave = async () => {
         try {
+            setIsSubmitting(true);
             const values = await form.validateFields();
             const res = await stagesApi.updateStage(stage.stageId, {
                 progressPercent: values.progressPercent,
@@ -55,6 +57,7 @@ const EditStageModal: FC<EditStageModalProps> = ({ stage, users, open, onClose, 
             }
         } catch (e) {}
         finally {
+            setIsSubmitting(false);
             onClose();
         }
     };
@@ -65,7 +68,7 @@ const EditStageModal: FC<EditStageModalProps> = ({ stage, users, open, onClose, 
     }));
 
     return (
-        <Modal title="Редактировать этап" open={open} onCancel={onClose} onOk={handleSave} okText="Сохранить">
+        <Modal title="Редактировать этап" open={open} onCancel={onClose} onOk={handleSave} okText="Сохранить" confirmLoading={isSubmitting}>
             <Form form={form} layout="vertical">
                 <Form.Item label="Прогресс (%)" name="progressPercent">
                     <InputNumber min={0} max={100} style={{ width: '100%' }} />

@@ -22,10 +22,17 @@ const StagesTable = ({projectId}: StagesTableProps) => {
     const [isStageModalOpen, setStageModalOpen] = useState(false);
     const [editingStage, setEditingStage] = useState<ShortStageResponse | null>(null);
     const [users, setUsers] = useState<UserResponse[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [deletingId, setDeletingId] = useState<number | null>(null);
 
     const fetchStages = async () => {
-        const res = await stagesApi.getAllStages(projectId);
-        if (!res.error) setStages(res.data || []);
+        setIsLoading(true);
+        try {
+            const res = await stagesApi.getAllStages(projectId);
+            if (!res.error) setStages(res.data || []);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const fetchUsers = async () => {
@@ -39,11 +46,13 @@ const StagesTable = ({projectId}: StagesTableProps) => {
     }, [projectId]);
 
     const deleteStage = async (stageId: number) => {
+        setDeletingId(stageId);
         const res = await stagesApi.deleteStage(stageId);
         if (!res.error) {
             message.success('Этап удалён');
             fetchStages();
         } else message.error('Не удалось удалить этап');
+        setDeletingId(null);
     };
 
     const stageColumns = [
@@ -68,7 +77,7 @@ const StagesTable = ({projectId}: StagesTableProps) => {
                     }}>Редактировать</Button>
                     <Popconfirm title={`Удалить этап "${record.name}"?"`} onConfirm={() => deleteStage(record.stageId)}
                                 okText="Да" cancelText="Отмена">
-                        <Button type="link" style={{color: 'red'}}>Удалить</Button>
+                        <Button type="link" style={{color: 'red'}} loading={deletingId === record.stageId}>Удалить</Button>
                     </Popconfirm>
                 </Space>
             )
@@ -81,7 +90,7 @@ const StagesTable = ({projectId}: StagesTableProps) => {
                 setEditingStage(null);
                 setStageModalOpen(true);
             }}>Добавить этап</Button>
-            <Table dataSource={stages} rowKey="stageId" columns={stageColumns} bordered/>
+            <Table dataSource={stages} rowKey="stageId" columns={stageColumns} bordered loading={isLoading}/>
             {hasValue(editingStage) ?
                 <EditStageModal users={users} stage={editingStage} open={isStageModalOpen} onClose={() => setStageModalOpen(false)}
                                 onSaved={fetchStages}/> :

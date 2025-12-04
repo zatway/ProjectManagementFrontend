@@ -5,15 +5,17 @@ import type {ShortProjectResponse} from "../../models/DTOModels/Response/ShortPr
 
 interface ProjectTableProps {
     data: ShortProjectResponse[];
-    actions: IProjectActions
+    actions: IProjectActions;
+    loading?: boolean;
 }
 
-export const ProjectTable: FC<ProjectTableProps> = ({ data, actions }) => {
+export const ProjectTable: FC<ProjectTableProps> = ({ data, actions, loading }) => {
     return (
         <Table
             columns={getColumns(actions)}
             dataSource={data}
             rowKey="projectId"
+            loading={loading}
             pagination={{
                 pageSize: 10,
                 showSizeChanger: true,
