@@ -1,7 +1,7 @@
 import type {Env} from "./vite-env";
 
 export const env: Env = {
-    REACT_APP_SERVICE_SERVICE_HOST: 'http://localhost:5274',
+    REACT_APP_SERVICE_SERVICE_HOST: import.meta.env.VITE_SERVICE_HOST ?? 'http://localhost:5274',
     REACT_APP_SERVICE_SERVICE_SIGNALR_HUB: '/hubs/notifications',
 
     REACT_APP_SERVICE_SERVICE_ENDPOINT_LOGIN: '/login',
