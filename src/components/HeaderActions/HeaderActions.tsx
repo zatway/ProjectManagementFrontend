@@ -1,8 +1,16 @@
 import {Button, Dropdown, Badge, Popover, List, Popconfirm, Typography} from "antd";
-import {LogoutOutlined, PlusOutlined, ReloadOutlined, DownOutlined, BellOutlined} from "@ant-design/icons";
+import {
+    LogoutOutlined,
+    PlusOutlined,
+    ReloadOutlined,
+    DownOutlined,
+    BellOutlined,
+    InfoCircleOutlined
+} from "@ant-design/icons";
 import {authLocalService} from "../../storageServices/authLocalService.ts";
 import {useState} from "react";
 import type {NotificationResponse} from "../../models/DTOModels/Response/SignalR/NotificationResponse.ts";
+import AboutProjectModal from "../AboutProjectModal.tsx";
 
 interface Props {
     onNewProject?: () => void;
@@ -30,6 +38,7 @@ export const HeaderActions = ({
                                   deleteNotification
                               }: Props) => {
     const [visible, setVisible] = useState(false);
+    const [isAboutModalOpen, setAboutModalOpen] = useState(false);
     const [processingId, setProcessingId] = useState<number | null>(null);
 
     const handleVisibleChange = (newVisible: boolean) => {
@@ -115,6 +124,12 @@ export const HeaderActions = ({
 
     const items = [
         {
+            key: "about",
+            label: "О проекте",
+            icon: <InfoCircleOutlined/>,
+            onClick: () => setAboutModalOpen(true)
+        },
+        {
             key: "new",
             label: "Новый проект",
             icon: <PlusOutlined/>,
@@ -163,6 +178,10 @@ export const HeaderActions = ({
             >
                 Выход
             </Button>
+            <AboutProjectModal
+                open={isAboutModalOpen}
+                onClose={() => setAboutModalOpen(false)}
+            />
         </div>
     );
 };
